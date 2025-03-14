@@ -1,0 +1,29 @@
+/* Tailwind CSS kullanılıyorsa, bu renkleri tailwind.config.js içinde tanımlamak daha doğru olacaktır */
+
+:root {
+  --primary-color: #dcac2f;
+  --secondary-color: #b5872c;
+  --tertiary-color: #755721;
+  --light-bg: #f8f5ef;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Navbar için custom stiller */
+.navbar-logo-text {
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 0.05em;
+}
+
+/* Gerekirse diğer özel stiller buraya eklenebilir */
+
+/* index.css veya App.css */
+.navbar-bg {
+  background-color: rgba(0, 0, 0, 0.8); /* Siyah renk, %50 opaklık */
+}
