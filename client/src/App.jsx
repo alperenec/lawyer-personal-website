@@ -6,18 +6,67 @@ import Services from "./pages/Services";
 import Articles from "./pages/Articles";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/faq";
+import Footer from "./components/Footer";
 import "./App.css";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/articles" element={<Articles />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/faq" element={<FAQ />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <Home />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <>
+              <About />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/services"
+          element={
+            <>
+              <Services />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/articles"
+          element={
+            <>
+              <Articles />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <>
+              <Contact />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/faq"
+          element={
+            <>
+              <FAQ />
+              <Footer />
+            </>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import FloatingContactButtons from "../components/FloatingContactButtons";
+import ServicesSection from "../components/ServicesSection";
+import Comments from "../components/Comments";
 import officeImage from "../assets/002.jpg";
+import lawyerImage from "../assets/004.jpg";
+import styles from "./Home.module.css";
 
 const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -11,37 +15,10 @@ const Home = () => {
     setIsLoaded(true);
   }, []);
 
-  // Ekran boyutunu izleme
-  const [screenSize, setScreenSize] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    // İlk yüklemede çağır
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Cihaz tipini belirleme
-  const isTablet = screenSize.width >= 640 && screenSize.width < 1024;
-  const isMobile = screenSize.width < 640;
-
   return (
-    <div className="min-h-screen relative">
-      {/* Siyah arka plan katmanı */}
+    <div className="flex flex-col min-h-screen relative">
+      {/* Background layers */}
       <div className="fixed inset-0 bg-black z-0"></div>
-
-      {/* Ofis görseli katmanı */}
       <div
         className="fixed inset-0 bg-cover bg-center opacity-20 z-10"
         style={{ backgroundImage: `url(${officeImage})` }}
@@ -51,23 +28,22 @@ const Home = () => {
       <Navbar />
 
       {/* Main Content */}
-      <div
-        className={`relative z-20 transition-opacity duration-700 ${
+      <main
+        className={`relative z-20 flex-grow pt-16 md:pt-28 pb-0 transition-opacity duration-700 ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
       >
-        {/* Hero Section - Yeni Düzen */}
-        <div className="container max-w-6xl mx-auto px-4 py-20 md:py-32">
+        <div className="container max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Sol taraf - Yazılar ve buton */}
-            <div className="flex flex-col items-start justify-center">
+            {/* Left side - Text and button */}
+            <div className="text-center md:text-left">
               <h2 className="text-base md:text-lg font-medium text-gray-300 mb-2">
                 AVUKAT | ULUSLARARASI HUKUK BÜROSU
               </h2>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
                 Hukukun <span className="text-[#dcac2f]">Çözüm</span> Ortağı
               </h1>
-              <p className="text-base md:text-lg text-gray-300 mb-6">
+              <p className="text-sm md:text-lg text-gray-300 mb-6">
                 Avukat, medeni, ceza ve iş hukuku alanlarında uzmanlaşmış bir
                 hukuk firmasıdır. Müvekkillerimize çeşitli hukuki ihtiyaçlarında
                 danışmanlık, dava takibi ve uyuşmazlık çözümü gibi hizmetler
@@ -75,13 +51,13 @@ const Home = () => {
                 müvekkillerimizin yanındayız.
               </p>
 
-              {/* Bize Ulaşın butonu */}
+              {/* Contact button */}
               <Link to="/contact">
-                <button className="bg-[#dcac2f] hover:bg-[#b5872c] text-black px-6 py-3 text-lg font-medium rounded-md transition-all duration-300 flex items-center">
+                <button className="bg-[#dcac2f] hover:bg-[#b5872c] text-black px-4 py-2 md:px-6 md:py-3 text-base md:text-lg font-medium rounded-md transition-all duration-300 flex items-center mx-auto md:mx-0 mb-4 md:mb-0">
                   Bize Ulaşın
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 ml-2"
+                    className="h-4 w-4 md:h-5 md:w-5 ml-2"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -97,22 +73,36 @@ const Home = () => {
               </Link>
             </div>
 
-            {/* Sağ taraf - Avukat fotoğrafı (veya özel içerik) */}
-            <div className="hidden md:block">
-              <img
-                src="/src/assets/004.jpg"
-                alt="Avukat"
-                className="w-full h-auto max-h-[600px] object-cover rounded-lg shadow-lg"
-              />
+            {/* Right side - Lawyer photo */}
+            <div className={styles.imageWrapper}>
+              {lawyerImage ? (
+                <img
+                  src={lawyerImage}
+                  alt="Avukat"
+                  className="w-full h-auto max-h-[500px] object-cover rounded-lg shadow-lg"
+                  onError={(e) => {
+                    console.error("Image failed to load");
+                    e.target.src =
+                      "https://via.placeholder.com/600x800?text=Avukat+Zafer+TAĞA";
+                  }}
+                />
+              ) : (
+                <div className="w-full h-[300px] md:h-[400px] bg-gray-800 rounded-lg flex items-center justify-center">
+                  <p className="text-gray-400">Resim Yüklenemiyor</p>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Services Section */}
+          <ServicesSection />
+
+          {/* Comments Section */}
+          <Comments />
         </div>
+      </main>
 
-        {/* Center Logo Section ve diğer içerikler - SEÇİME BAĞLI */}
-        {/* Not: İsterseniz bu bölümü tekrar ekleyebilirsiniz */}
-      </div>
-
-      {/* Floating Contact Buttons - Dokunmuyoruz */}
+      {/* Floating Contact Buttons */}
       <FloatingContactButtons />
     </div>
   );

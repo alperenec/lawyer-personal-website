@@ -1,0 +1,30 @@
+/* Responsive behavior for the image wrapper */
+.imageWrapper {
+    display: block; /* Show on all screens */
+  }
+  
+  /* Make image more optimized for mobile */
+  @media (max-width: 767px) {
+    .imageWrapper img {
+      max-height: 280px;
+      margin: 0 auto;
+    }
+  }
+  
+  /* Responsive adjustments for the services grid */
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr) !important; /* Override Tailwind if needed */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .grid {
+      grid-template-columns: 1fr !important; /* Override Tailwind if needed */
+    }
+  
+    button {
+      font-size: 0.75rem !important; /* Override Tailwind if needed */
+      padding: 0.5rem 1rem !important;
+    }
+  }
