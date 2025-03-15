@@ -1,7 +1,7 @@
 /* Tailwind CSS kullanılıyorsa, bu renkleri tailwind.config.js içinde tanımlamak daha doğru olacaktır */
 
 :root {
-  --primary-color: #dcac2f;
+  --primary-color: #fdc448;
   --secondary-color: #b5872c;
   --tertiary-color: #755721;
   --light-bg: #f8f5ef;

@@ -1,38 +1,58 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap');
-
+  
 @import "tailwindcss";
-
-:root {
-  --primary-color: #dcac2f;
-  --secondary-color: #b5872c;
-  --tertiary-color: #755721;
-  --bg-color: #f8f5ef;  /* Krem rengi arkaplan */
-  --text-color: #333333;
-}
-
-/* Bu CSS'i index.css veya App.css dosyasına ekleyin */
-body {
-  font-family: 'Source Sans Pro', sans-serif;
-  color: var(--text-color);
-  background-color: var(--bg-color);
-}
-
-h1, h2, h3, h4, h5, h6, .heading-font {
-  font-family: 'Playfair Display', serif;
-}
-
-/* Buton stilleri */
-.btn-primary {
-  background-color: var(--primary-color);
-  color: black;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-.btn-primary:hover {
-  background-color: var(--secondary-color);
-}
-
+  
+  :root {
+    --primary-color: #dcac2f;
+    --secondary-color: #b5872c;
+    --tertiary-color: #755721;
+    --bg-color: #f8f5ef;  /* Krem rengi arkaplan */
+    --text-color: #333333;
+  }
+  
+  /* Genel stiller */
+  body {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+  }
+  
+  h1, h2, h3, h4, h5, h6, .heading-font {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  /* Navbar bağlantı stilleri */
+  .nav-link {
+    position: relative;
+    padding-bottom: 0.25rem;
+  }
+  
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #dcac2f;
+    transition: width 0.3s ease;
+  }
+  
+  .nav-link:hover::after {
+    width: 100%;
+  }
+  
+  /* Buton stilleri */
+  .btn-primary {
+    background-color: var(--primary-color);
+    color: black;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--secondary-color);
+  }
