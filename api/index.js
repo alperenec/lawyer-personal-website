@@ -10,7 +10,17 @@ import path from "path";
 import cors from "cors";
 import fs from "fs";
 
+// .env dosyasını en üstte yükle
 dotenv.config();
+
+// Ortam değişkenlerini kontrol et
+console.log("Environment Variables Loaded:", {
+  PORT: process.env.PORT,
+  MONGO: process.env.MONGO,
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+});
 
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
@@ -49,6 +59,14 @@ app.use("/api/upload", uploadRoutes);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
 
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    statusCode: 404,
+    message: "Route not found",
+  });
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
@@ -64,7 +82,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3000; // Portu 3000 olarak sabitledik
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}!`);
 });

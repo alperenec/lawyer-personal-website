@@ -46,7 +46,9 @@ export default function CreatePost() {
         } catch (jsonError) {
           errorText = await res.text(); // JSON değilse, metin olarak al
           setImageUploadError(
-            `Image upload failed: ${res.status} ${res.statusText} - ${errorText}`
+            `Image upload failed: ${res.status} ${res.statusText} - ${
+              errorText || "Could not connect to the server"
+            }`
           );
         }
         setImageUploadProgress(null);
@@ -64,7 +66,11 @@ export default function CreatePost() {
       setImageUploadError(null);
     } catch (error) {
       console.error("Upload error:", error);
-      setImageUploadError(`Image upload failed: ${error.message}`);
+      setImageUploadError(
+        error.message.includes("Failed to fetch")
+          ? "Could not connect to the server. Please ensure the backend is running."
+          : `Image upload failed: ${error.message}`
+      );
       setImageUploadProgress(null);
     }
   };
@@ -92,7 +98,11 @@ export default function CreatePost() {
         navigate(`/post/${data.slug}`);
       }
     } catch (error) {
-      setPublishError("Something went wrong");
+      setPublishError(
+        error.message.includes("Failed to fetch")
+          ? "Could not connect to the server. Please ensure the backend is running."
+          : "Something went wrong"
+      );
     }
   };
 
@@ -166,7 +176,6 @@ export default function CreatePost() {
             className="w-full h-72 object-cover"
           />
         )}
-        {/* ReactQuill yerine textarea */}
         <textarea
           placeholder="Write your post content here..."
           required

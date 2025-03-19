@@ -18,54 +18,89 @@ export default function DashboardComp() {
   const [lastMonthUsers, setLastMonthUsers] = useState(0);
   const [lastMonthPosts, setLastMonthPosts] = useState(0);
   const [lastMonthComments, setLastMonthComments] = useState(0);
+  const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("/api/user/getusers?limit=5");
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+        const res = await fetch(`${API_URL}/api/user/getusers?limit=5`, {
+          credentials: "include",
+        });
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users);
           setTotalUsers(data.totalUsers);
           setLastMonthUsers(data.lastMonthUsers);
+        } else {
+          setError(data.message || "Failed to fetch users");
         }
       } catch (error) {
-        console.log(error.message);
+        setError(
+          error.message.includes("Failed to fetch")
+            ? "Could not connect to the server. Please ensure the backend is running."
+            : "Error fetching users: " + error.message
+        );
       }
     };
+
     const fetchPosts = async () => {
       try {
-        const res = await fetch("/api/post/getposts?limit=5");
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+        const res = await fetch(`${API_URL}/api/post/getposts?limit=5`, {
+          credentials: "include",
+        });
         const data = await res.json();
         if (res.ok) {
           setPosts(data.posts);
           setTotalPosts(data.totalPosts);
           setLastMonthPosts(data.lastMonthPosts);
+        } else {
+          setError(data.message || "Failed to fetch posts");
         }
       } catch (error) {
-        console.log(error.message);
+        setError(
+          error.message.includes("Failed to fetch")
+            ? "Could not connect to the server. Please ensure the backend is running."
+            : "Error fetching posts: " + error.message
+        );
       }
     };
+
     const fetchComments = async () => {
       try {
-        const res = await fetch("/api/comment/getcomments?limit=5");
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+        const res = await fetch(`${API_URL}/api/comment/getcomments?limit=5`, {
+          credentials: "include",
+        });
         const data = await res.json();
         if (res.ok) {
           setComments(data.comments);
           setTotalComments(data.totalComments);
           setLastMonthComments(data.lastMonthComments);
+        } else {
+          setError(data.message || "Failed to fetch comments");
         }
       } catch (error) {
-        console.log(error.message);
+        setError(
+          error.message.includes("Failed to fetch")
+            ? "Could not connect to the server. Please ensure the backend is running."
+            : "Error fetching comments: " + error.message
+        );
       }
     };
+
     if (currentUser.isAdmin) {
       fetchUsers();
       fetchPosts();
       fetchComments();
     }
   }, [currentUser]);
+
+  if (error) {
+    return <div className="p-3 text-center text-red-500">{error}</div>;
+  }
 
   return (
     <div className="p-3 md:mx-auto">

@@ -1,4 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
+dotenv.config();
 import path from "path";
 import fs from "fs";
 import multer from "multer";

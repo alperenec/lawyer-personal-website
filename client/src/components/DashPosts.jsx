@@ -9,20 +9,31 @@ export default function DashPosts() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+        const res = await fetch(
+          `${API_URL}/api/post/getposts?userId=${currentUser._id}`,
+          { credentials: "include" }
+        );
         const data = await res.json();
         if (res.ok) {
           setUserPosts(data.posts);
           if (data.posts.length < 9) {
             setShowMore(false);
           }
+        } else {
+          setError(data.message || "Failed to fetch posts");
         }
       } catch (error) {
-        console.log(error.message);
+        setError(
+          error.message.includes("Failed to fetch")
+            ? "Could not connect to the server. Please ensure the backend is running."
+            : "Error fetching posts: " + error.message
+        );
       }
     };
     if (currentUser.isAdmin) {
@@ -33,8 +44,10 @@ export default function DashPosts() {
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
       const res = await fetch(
-        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
+        `${API_URL}/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`,
+        { credentials: "include" }
       );
       const data = await res.json();
       if (res.ok) {
@@ -42,33 +55,49 @@ export default function DashPosts() {
         if (data.posts.length < 9) {
           setShowMore(false);
         }
+      } else {
+        setError(data.message || "Failed to fetch more posts");
       }
     } catch (error) {
-      console.log(error.message);
+      setError(
+        error.message.includes("Failed to fetch")
+          ? "Could not connect to the server. Please ensure the backend is running."
+          : "Error fetching more posts: " + error.message
+      );
     }
   };
 
   const handleDeletePost = async () => {
     setShowModal(false);
     try {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
       const res = await fetch(
-        `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+        `${API_URL}/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
         {
           method: "DELETE",
+          credentials: "include",
         }
       );
       const data = await res.json();
       if (!res.ok) {
-        console.log(data.message);
+        setError(data.message || "Failed to delete post");
       } else {
         setUserPosts((prev) =>
           prev.filter((post) => post._id !== postIdToDelete)
         );
       }
     } catch (error) {
-      console.log(error.message);
+      setError(
+        error.message.includes("Failed to fetch")
+          ? "Could not connect to the server. Please ensure the backend is running."
+          : "Error deleting post: " + error.message
+      );
     }
   };
+
+  if (error) {
+    return <div className="p-3 text-center text-red-500">{error}</div>;
+  }
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3">
@@ -160,7 +189,6 @@ export default function DashPosts() {
         <p>You have no posts yet!</p>
       )}
 
-      {/* Tailwind CSS ile Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-5 max-w-md w-full">
