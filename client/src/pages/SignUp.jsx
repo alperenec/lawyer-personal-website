@@ -1,117 +1,149 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import officeImage from "../assets/002.jpg";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
-      return setErrorMessage("Please fill out all fields.");
+      return setErrorMessage("Lütfen tüm alanları doldurun.");
     }
+
     try {
       setLoading(true);
       setErrorMessage(null);
-      // SignUp.jsx dosyasında, fetch isteği için:
-      const res = await fetch("http://localhost:3000/api/auth/signup", {
+
+      // API çağrısını 3002 portuna yapıyoruz
+      console.log("Kayıt için gönderilen veriler:", formData);
+      const res = await fetch("http://localhost:3002/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(formData),
-        credentials: "include", // Cookie'leri dahil etmek için
       });
+
+      console.log("API response status:", res.status);
       const data = await res.json();
-      if (data.success === false) {
-        return setErrorMessage(data.message);
+      console.log("API response data:", data);
+
+      if (!res.ok) {
+        setLoading(false);
+        return setErrorMessage(data.message || "Kayıt başarısız");
       }
+
       setLoading(false);
-      if (res.ok) {
-        navigate("/sign-in");
-      }
+      navigate("/sign-in");
     } catch (error) {
-      setErrorMessage(error.message);
+      console.error("Kayıt hatası:", error);
+      setErrorMessage(
+        "Bir bağlantı hatası oluştu. API sunucusunun çalıştığından emin olun."
+      );
       setLoading(false);
     }
   };
-  return (
-    <div className="min-h-screen mt-20">
-      <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
-        {/* left */}
-        <div className="flex-1">
-          <Link to="/" className="font-bold dark:text-white text-4xl">
-            <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
-              Sahand's
-            </span>
-            Blog
-          </Link>
-          <p className="text-sm mt-5">
-            This is a demo project. You can sign up with your email and password
-            or with Google.
-          </p>
-        </div>
-        {/* right */}
 
-        <div className="flex-1">
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <Label value="Your username" />
-              <TextInput
-                type="text"
-                placeholder="Username"
-                id="username"
-                onChange={handleChange}
-              />
+  return (
+    <div className="min-h-screen relative">
+      {/* Siyah arka plan katmanı */}
+      <div className="fixed inset-0 bg-black z-0"></div>
+
+      {/* Ofis görseli katmanı - düşük opaklık ile */}
+      <div
+        className="fixed inset-0 bg-cover bg-center opacity-30 z-10"
+        style={{ backgroundImage: `url(${officeImage})` }}
+      ></div>
+
+      <div className="relative z-20 pt-36 px-6 md:px-12 lg:px-24">
+        <div className="max-w-md mx-auto">
+          <h1 className="text-4xl font-bold text-white mb-6 text-center">
+            Kayıt Ol
+          </h1>
+
+          <div className="bg-black bg-opacity-70 p-6 rounded-lg shadow-lg">
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="username" className="block text-white mb-2">
+                  Kullanıcı Adı
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  placeholder="kullaniciadi"
+                  onChange={handleChange}
+                  className="w-full bg-gray-800 text-white border border-gray-700 rounded px-4 py-2 focus:outline-none focus:border-[#dcac2f]"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-white mb-2">
+                  E-posta
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="ornek@mail.com"
+                  onChange={handleChange}
+                  className="w-full bg-gray-800 text-white border border-gray-700 rounded px-4 py-2 focus:outline-none focus:border-[#dcac2f]"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-white mb-2">
+                  Şifre
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="••••••••"
+                  onChange={handleChange}
+                  className="w-full bg-gray-800 text-white border border-gray-700 rounded px-4 py-2 focus:outline-none focus:border-[#dcac2f]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`bg-[#dcac2f] hover:bg-[#b5872c] text-black px-6 py-3 rounded font-medium ${
+                  loading ? "opacity-75 cursor-not-allowed" : ""
+                }`}
+              >
+                {loading ? "Kayıt Yapılıyor..." : "Kayıt Ol"}
+              </button>
+
+              {/* Google ile giriş butonu (OAuth) */}
+              <div className="relative flex items-center justify-center my-2">
+                <div className="border-t border-gray-600 absolute w-full"></div>
+                <div className="bg-black bg-opacity-70 text-gray-400 text-sm px-3 relative">
+                  veya
+                </div>
+              </div>
+
+              <OAuth />
+            </form>
+
+            <div className="mt-4 text-center text-gray-300">
+              <span>Zaten bir hesabınız var mı? </span>
+              <Link to="/sign-in" className="text-[#dcac2f] hover:underline">
+                Giriş Yap
+              </Link>
             </div>
-            <div>
-              <Label value="Your email" />
-              <TextInput
-                type="email"
-                placeholder="name@company.com"
-                id="email"
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label value="Your password" />
-              <TextInput
-                type="password"
-                placeholder="Password"
-                id="password"
-                onChange={handleChange}
-              />
-            </div>
-            <Button
-              gradientDuoTone="purpleToPink"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Loading...</span>
-                </>
-              ) : (
-                "Sign Up"
-              )}
-            </Button>
-            <OAuth />
-          </form>
-          <div className="flex gap-2 text-sm mt-5">
-            <span>Have an account?</span>
-            <Link to="/sign-in" className="text-blue-500">
-              Sign In
-            </Link>
+
+            {errorMessage && (
+              <div className="mt-4 p-3 bg-red-900 bg-opacity-70 text-white rounded">
+                {errorMessage}
+              </div>
+            )}
           </div>
-          {errorMessage && (
-            <Alert className="mt-5" color="failure">
-              {errorMessage}
-            </Alert>
-          )}
         </div>
       </div>
     </div>

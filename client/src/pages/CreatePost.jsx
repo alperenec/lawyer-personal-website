@@ -14,7 +14,7 @@ export default function CreatePost() {
 
   const navigate = useNavigate();
 
-  const handleUpdloadImage = async () => {
+  const handleUploadImage = async () => {
     try {
       if (!file) {
         setImageUploadError("Please select an image");
@@ -22,33 +22,39 @@ export default function CreatePost() {
       }
       setImageUploadError(null);
 
-      // Create a FormData object to send the file
       const formData = new FormData();
       formData.append("file", file);
 
-      // Show the progress as indeterminate
       setImageUploadProgress(1);
 
-      // Use the full URL with the correct port
-      const res = await fetch("http://localhost:3000/api/upload", {
+      // API URL'sini ortam değişkeninden al
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
         credentials: "include",
         body: formData,
       });
 
       if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Upload error response:", errorText);
-        setImageUploadError(
-          `Image upload failed: ${res.status} ${res.statusText}`
-        );
+        let errorText;
+        try {
+          errorText = await res.json(); // JSON formatında hata mesajı almayı dene
+          setImageUploadError(
+            errorText.message ||
+              `Image upload failed: ${res.status} ${res.statusText}`
+          );
+        } catch (jsonError) {
+          errorText = await res.text(); // JSON değilse, metin olarak al
+          setImageUploadError(
+            `Image upload failed: ${res.status} ${res.statusText} - ${errorText}`
+          );
+        }
         setImageUploadProgress(null);
         return;
       }
 
       const data = await res.json();
 
-      // Update form data with the Cloudinary URL
       setFormData((prev) => ({
         ...prev,
         image: data.url,
@@ -66,7 +72,8 @@ export default function CreatePost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/post/create", {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const res = await fetch(`${API_URL}/api/post/create`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -88,45 +95,48 @@ export default function CreatePost() {
       setPublishError("Something went wrong");
     }
   };
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Create a post</h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
-          <TextInput
+          <input
             type="text"
             placeholder="Title"
             required
             id="title"
-            className="flex-1"
+            className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
           />
-          <Select
+          <select
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
             }
+            className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             <option value="uncategorized">Select a category</option>
             <option value="javascript">JavaScript</option>
             <option value="reactjs">React.js</option>
             <option value="nextjs">Next.js</option>
-          </Select>
+          </select>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
-          <FileInput
+          <input
             type="file"
             accept="image/*"
             onChange={(e) => setFile(e.target.files[0])}
+            className="p-2 border border-gray-300 rounded"
           />
-          <Button
+          <button
             type="button"
-            gradientDuoTone="purpleToBlue"
-            size="sm"
-            outline
-            onClick={handleUpdloadImage}
+            onClick={handleUploadImage}
             disabled={imageUploadProgress}
+            className={`p-2 text-white rounded bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 ${
+              imageUploadProgress ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {imageUploadProgress ? (
               <div className="w-16 h-16">
@@ -142,9 +152,13 @@ export default function CreatePost() {
             ) : (
               "Upload Image"
             )}
-          </Button>
+          </button>
         </div>
-        {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
+        {imageUploadError && (
+          <div className="p-3 bg-red-100 text-red-700 border border-red-400 rounded">
+            {imageUploadError}
+          </div>
+        )}
         {formData.image && (
           <img
             src={formData.image}
@@ -152,22 +166,26 @@ export default function CreatePost() {
             className="w-full h-72 object-cover"
           />
         )}
-        <ReactQuill
-          theme="snow"
-          placeholder="Write something..."
-          className="h-72 mb-12"
+        {/* ReactQuill yerine textarea */}
+        <textarea
+          placeholder="Write your post content here..."
           required
-          onChange={(value) => {
-            setFormData({ ...formData, content: value });
-          }}
+          id="content"
+          className="p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 h-72 resize-y"
+          onChange={(e) =>
+            setFormData({ ...formData, content: e.target.value })
+          }
         />
-        <Button type="submit" gradientDuoTone="purpleToPink">
+        <button
+          type="submit"
+          className="p-2 text-white rounded bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+        >
           Publish
-        </Button>
+        </button>
         {publishError && (
-          <Alert className="mt-5" color="failure">
+          <div className="p-3 mt-5 bg-red-100 text-red-700 border border-red-400 rounded">
             {publishError}
-          </Alert>
+          </div>
         )}
       </form>
     </div>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../firebase";
@@ -6,41 +7,71 @@ import { signInSuccess } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function OAuth() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const auth = getAuth(app);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleGoogleClick = async () => {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
     try {
+      setLoading(true);
+      setError(null);
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+
       const resultsFromGoogle = await signInWithPopup(auth, provider);
-      const res = await fetch("/api/auth/google", {
+      console.log("Google auth result:", {
+        name: resultsFromGoogle.user.displayName,
+        email: resultsFromGoogle.user.email,
+        photo: resultsFromGoogle.user.photoURL,
+      });
+
+      const res = await fetch("http://localhost:3002/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           name: resultsFromGoogle.user.displayName,
           email: resultsFromGoogle.user.email,
           googlePhotoUrl: resultsFromGoogle.user.photoURL,
         }),
       });
+
+      console.log("API response status:", res.status);
       const data = await res.json();
-      if (res.ok) {
-        dispatch(signInSuccess(data));
-        navigate("/");
+      console.log("API response data:", data);
+
+      if (!res.ok) {
+        setLoading(false);
+        return setError(data.message || "Google ile giriş başarısız");
       }
+
+      dispatch(signInSuccess(data));
+      setLoading(false);
+      navigate("/");
     } catch (error) {
-      console.log(error);
+      console.error("Google login error:", error);
+      setError("Google ile giriş yapılırken bir hata oluştu");
+      setLoading(false);
     }
   };
+
   return (
-    <Button
-      type="button"
-      gradientDuoTone="pinkToOrange"
-      outline
-      onClick={handleGoogleClick}
-    >
-      <AiFillGoogleCircle className="w-6 h-6 mr-2" />
-      Continue with Google
-    </Button>
+    <>
+      <button
+        type="button"
+        onClick={handleGoogleClick}
+        disabled={loading}
+        className="flex items-center justify-center gap-2 bg-white text-gray-800 px-6 py-3 rounded font-medium hover:bg-gray-200 transition-all w-full"
+      >
+        <AiFillGoogleCircle className="w-6 h-6 text-red-500" />
+        {loading ? "İşleniyor..." : "Google ile devam et"}
+      </button>
+
+      {error && (
+        <div className="mt-2 text-red-500 text-sm text-center">{error}</div>
+      )}
+    </>
   );
 }

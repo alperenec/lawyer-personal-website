@@ -1,3 +1,7 @@
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { signoutSuccess } from "../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 import {
   HiUser,
   HiArrowSmRight,
@@ -6,17 +10,13 @@ import {
   HiAnnotation,
   HiChartPie,
 } from "react-icons/hi";
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { signoutSuccess } from "../redux/user/userSlice";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 
 export default function DashSidebar() {
   const location = useLocation();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState("");
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
@@ -24,6 +24,7 @@ export default function DashSidebar() {
       setTab(tabFromUrl);
     }
   }, [location.search]);
+
   const handleSignout = async () => {
     try {
       const res = await fetch("/api/user/signout", {
@@ -39,74 +40,83 @@ export default function DashSidebar() {
       console.log(error.message);
     }
   };
+
   return (
-    <Sidebar className="w-full md:w-56">
-      <Sidebar.Items>
-        <Sidebar.ItemGroup className="flex flex-col gap-1">
-          {currentUser && currentUser.isAdmin && (
-            <Link to="/dashboard?tab=dash">
-              <Sidebar.Item
-                active={tab === "dash" || !tab}
-                icon={HiChartPie}
-                as="div"
-              >
-                Dashboard
-              </Sidebar.Item>
-            </Link>
-          )}
-          <Link to="/dashboard?tab=profile">
-            <Sidebar.Item
-              active={tab === "profile"}
-              icon={HiUser}
-              label={currentUser.isAdmin ? "Admin" : "User"}
-              labelColor="dark"
-              as="div"
+    <div className="w-full md:w-56 bg-gray-800 text-white min-h-screen">
+      <div className="flex flex-col gap-1 p-3">
+        {currentUser && currentUser.isAdmin && (
+          <Link to="/dashboard?tab=dash">
+            <div
+              className={`flex items-center gap-2 p-3 rounded-lg ${
+                tab === "dash" || !tab ? "bg-gray-700" : "hover:bg-gray-700"
+              }`}
             >
-              Profile
-            </Sidebar.Item>
+              <HiChartPie className="text-xl" />
+              <span>Dashboard</span>
+            </div>
           </Link>
-          {currentUser.isAdmin && (
-            <Link to="/dashboard?tab=posts">
-              <Sidebar.Item
-                active={tab === "posts"}
-                icon={HiDocumentText}
-                as="div"
-              >
-                Posts
-              </Sidebar.Item>
-            </Link>
-          )}
-          {currentUser.isAdmin && (
-            <>
-              <Link to="/dashboard?tab=users">
-                <Sidebar.Item
-                  active={tab === "users"}
-                  icon={HiOutlineUserGroup}
-                  as="div"
-                >
-                  Users
-                </Sidebar.Item>
-              </Link>
-              <Link to="/dashboard?tab=comments">
-                <Sidebar.Item
-                  active={tab === "comments"}
-                  icon={HiAnnotation}
-                  as="div"
-                >
-                  Comments
-                </Sidebar.Item>
-              </Link>
-            </>
-          )}
-          <Sidebar.Item
-            icon={HiArrowSmRight}
-            className="cursor-pointer"
-            onClick={handleSignout}
+        )}
+        <Link to="/dashboard?tab=profile">
+          <div
+            className={`flex items-center gap-2 p-3 rounded-lg ${
+              tab === "profile" ? "bg-gray-700" : "hover:bg-gray-700"
+            }`}
           >
-            Sign Out
-          </Sidebar.Item>
-        </Sidebar.ItemGroup>
-      </Sidebar.Items>
-    </Sidebar>
+            <HiUser className="text-xl" />
+            <span>Profile</span>
+            <span
+              className={`ml-auto text-xs px-2 py-1 rounded ${
+                currentUser.isAdmin ? "bg-green-500" : "bg-gray-500"
+              }`}
+            >
+              {currentUser.isAdmin ? "Admin" : "User"}
+            </span>
+          </div>
+        </Link>
+        {currentUser.isAdmin && (
+          <Link to="/dashboard?tab=posts">
+            <div
+              className={`flex items-center gap-2 p-3 rounded-lg ${
+                tab === "posts" ? "bg-gray-700" : "hover:bg-gray-700"
+              }`}
+            >
+              <HiDocumentText className="text-xl" />
+              <span>Posts</span>
+            </div>
+          </Link>
+        )}
+        {currentUser.isAdmin && (
+          <>
+            <Link to="/dashboard?tab=users">
+              <div
+                className={`flex items-center gap-2 p-3 rounded-lg ${
+                  tab === "users" ? "bg-gray-700" : "hover:bg-gray-700"
+                }`}
+              >
+                <HiOutlineUserGroup className="text-xl" />
+                <span>Users</span>
+              </div>
+            </Link>
+            <Link to="/dashboard?tab=comments">
+              <div
+                className={`flex items-center gap-2 p-3 rounded-lg ${
+                  tab === "comments" ? "bg-gray-700" : "hover:bg-gray-700"
+                }`}
+              >
+                <HiAnnotation className="text-xl" />
+                <span>Comments</span>
+              </div>
+            </Link>
+          </>
+        )}
+        <div
+          onClick={handleSignout}
+          className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-700 cursor-pointer"
+        >
+          <HiArrowSmRight className="text-xl" />
+          <span>Sign Out</span>
+        </div>
+      </div>
+    </div>
   );
 }

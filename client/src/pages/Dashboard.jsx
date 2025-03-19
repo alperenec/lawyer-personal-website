@@ -9,6 +9,7 @@ import DashboardComp from "../components/DashboardComp";
 export default function Dashboard() {
   const location = useLocation();
   const [tab, setTab] = useState("");
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
@@ -16,21 +17,28 @@ export default function Dashboard() {
       setTab(tabFromUrl);
     }
   }, [location.search]);
+
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="md:w-56">
-        {/* Sidebar */}
+    <div className="min-h-screen flex flex-col md:flex-row bg-slate-900 text-white">
+      {/* Sidebar */}
+      <div className="w-full md:w-56">
         <DashSidebar />
       </div>
-      {/* profile... */}
-      {tab === "profile" && <DashProfile />}
-      {/* posts... */}
-      {tab === "posts" && <DashPosts />}
-      {/* users */}
-      {tab === "users" && <DashUsers />}
 
-      {/* dashboard comp */}
-      {tab === "dash" && <DashboardComp />}
+      {/* Main Content */}
+      <div className="flex-1 p-4">
+        {/* Profile */}
+        {tab === "profile" && <DashProfile />}
+
+        {/* Posts */}
+        {tab === "posts" && <DashPosts />}
+
+        {/* Users */}
+        {tab === "users" && <DashUsers />}
+
+        {/* Dashboard */}
+        {(tab === "dash" || !tab) && <DashboardComp />}
+      </div>
     </div>
   );
 }

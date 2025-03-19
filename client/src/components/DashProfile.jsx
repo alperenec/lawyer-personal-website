@@ -35,6 +35,7 @@ export default function DashProfile() {
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
   const dispatch = useDispatch();
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -42,6 +43,7 @@ export default function DashProfile() {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
+
   useEffect(() => {
     if (imageFile) {
       uploadImage();
@@ -49,16 +51,6 @@ export default function DashProfile() {
   }, [imageFile]);
 
   const uploadImage = async () => {
-    // service firebase.storage {
-    //   match /b/{bucket}/o {
-    //     match /{allPaths=**} {
-    //       allow read;
-    //       allow write: if
-    //       request.resource.size < 2 * 1024 * 1024 &&
-    //       request.resource.contentType.matches('image/.*')
-    //     }
-    //   }
-    // }
     setImageFileUploading(true);
     setImageFileUploadError(null);
     const storage = getStorage(app);
@@ -70,7 +62,6 @@ export default function DashProfile() {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-
         setImageFileUploadProgress(progress.toFixed(0));
       },
       (error) => {
@@ -130,6 +121,7 @@ export default function DashProfile() {
       setUpdateUserError(error.message);
     }
   };
+
   const handleDeleteUser = async () => {
     setShowModal(false);
     try {
@@ -163,6 +155,7 @@ export default function DashProfile() {
       console.log(error.message);
     }
   };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
@@ -209,96 +202,115 @@ export default function DashProfile() {
             }`}
           />
         </div>
+
         {imageFileUploadError && (
-          <Alert color="failure">{imageFileUploadError}</Alert>
+          <div className="p-3 bg-red-100 text-red-700 border border-red-400 rounded">
+            {imageFileUploadError}
+          </div>
         )}
-        <TextInput
+
+        <input
           type="text"
           id="username"
           placeholder="username"
           defaultValue={currentUser.username}
           onChange={handleChange}
+          className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
-        <TextInput
+        <input
           type="email"
           id="email"
           placeholder="email"
           defaultValue={currentUser.email}
           onChange={handleChange}
+          className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
-        <TextInput
+        <input
           type="password"
           id="password"
           placeholder="password"
           onChange={handleChange}
+          className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
-        <Button
+
+        <button
           type="submit"
-          gradientDuoTone="purpleToBlue"
-          outline
           disabled={loading || imageFileUploading}
+          className={`p-2 text-white rounded bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 border border-transparent ${
+            loading || imageFileUploading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           {loading ? "Loading..." : "Update"}
-        </Button>
-        {currentUser.isAdmin && (
-          <Link to={"/create-post"}>
-            <Button
-              type="button"
-              gradientDuoTone="purpleToPink"
-              className="w-full"
-            >
-              Create a post
-            </Button>
-          </Link>
-        )}
+        </button>
+
+        {/* "Create a post" butonu - Tüm kullanıcılar için görünür */}
+        <Link to={"/create-post"}>
+          <button
+            type="button"
+            className="p-2 w-full text-white rounded bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+          >
+            Create a post
+          </button>
+        </Link>
       </form>
+
       <div className="text-red-500 flex justify-between mt-5">
-        <span onClick={() => setShowModal(true)} className="cursor-pointer">
+        <span
+          onClick={() => setShowModal(true)}
+          className="cursor-pointer hover:underline"
+        >
           Delete Account
         </span>
-        <span onClick={handleSignout} className="cursor-pointer">
+        <span
+          onClick={handleSignout}
+          className="cursor-pointer hover:underline"
+        >
           Sign Out
         </span>
       </div>
+
       {updateUserSuccess && (
-        <Alert color="success" className="mt-5">
+        <div className="p-3 mt-5 bg-green-100 text-green-700 border border-green-400 rounded">
           {updateUserSuccess}
-        </Alert>
+        </div>
       )}
       {updateUserError && (
-        <Alert color="failure" className="mt-5">
+        <div className="p-3 mt-5 bg-red-100 text-red-700 border border-red-400 rounded">
           {updateUserError}
-        </Alert>
+        </div>
       )}
       {error && (
-        <Alert color="failure" className="mt-5">
+        <div className="p-3 mt-5 bg-red-100 text-red-700 border border-red-400 rounded">
           {error}
-        </Alert>
+        </div>
       )}
-      <Modal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        popup
-        size="md"
-      >
-        <Modal.Header />
-        <Modal.Body>
-          <div className="text-center">
-            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete your account?
-            </h3>
-            <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleDeleteUser}>
-                Yes, I'm sure
-              </Button>
-              <Button color="gray" onClick={() => setShowModal(false)}>
-                No, cancel
-              </Button>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-5 max-w-md w-full">
+            <div className="text-center">
+              <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 mb-4 mx-auto" />
+              <h3 className="mb-5 text-lg text-gray-500">
+                Are you sure you want to delete your account?
+              </h3>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={handleDeleteUser}
+                  className="p-2 text-white bg-red-500 rounded hover:bg-red-600"
+                >
+                  Yes, I'm sure
+                </button>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="p-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  No, cancel
+                </button>
+              </div>
             </div>
           </div>
-        </Modal.Body>
-      </Modal>
+        </div>
+      )}
     </div>
   );
 }

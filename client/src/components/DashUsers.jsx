@@ -9,6 +9,7 @@ export default function DashUsers() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState("");
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -63,41 +64,58 @@ export default function DashUsers() {
   };
 
   return (
-    <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+    <div className="table-auto overflow-x-scroll md:mx-auto p-3">
       {currentUser.isAdmin && users.length > 0 ? (
         <>
-          <Table hoverable className="shadow-md">
-            <Table.Head>
-              <Table.HeadCell>Date created</Table.HeadCell>
-              <Table.HeadCell>User image</Table.HeadCell>
-              <Table.HeadCell>Username</Table.HeadCell>
-              <Table.HeadCell>Email</Table.HeadCell>
-              <Table.HeadCell>Admin</Table.HeadCell>
-              <Table.HeadCell>Delete</Table.HeadCell>
-            </Table.Head>
-            {users.map((user) => (
-              <Table.Body className="divide-y" key={user._id}>
-                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell>
+          <table className="shadow-md w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Date created
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  User image
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Username
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Email
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Admin
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Delete
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr
+                  key={user._id}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <td className="px-6 py-4">
                     {new Date(user.createdAt).toLocaleDateString()}
-                  </Table.Cell>
-                  <Table.Cell>
+                  </td>
+                  <td className="px-6 py-4">
                     <img
                       src={user.profilePicture}
                       alt={user.username}
                       className="w-10 h-10 object-cover bg-gray-500 rounded-full"
                     />
-                  </Table.Cell>
-                  <Table.Cell>{user.username}</Table.Cell>
-                  <Table.Cell>{user.email}</Table.Cell>
-                  <Table.Cell>
+                  </td>
+                  <td className="px-6 py-4">{user.username}</td>
+                  <td className="px-6 py-4">{user.email}</td>
+                  <td className="px-6 py-4">
                     {user.isAdmin ? (
                       <FaCheck className="text-green-500" />
                     ) : (
                       <FaTimes className="text-red-500" />
                     )}
-                  </Table.Cell>
-                  <Table.Cell>
+                  </td>
+                  <td className="px-6 py-4">
                     <span
                       onClick={() => {
                         setShowModal(true);
@@ -107,15 +125,15 @@ export default function DashUsers() {
                     >
                       Delete
                     </span>
-                  </Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            ))}
-          </Table>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
           {showMore && (
             <button
               onClick={handleShowMore}
-              className="w-full text-teal-500 self-center text-sm py-7"
+              className="w-full text-teal-500 self-center text-sm py-7 hover:underline"
             >
               Show more
             </button>
@@ -124,30 +142,34 @@ export default function DashUsers() {
       ) : (
         <p>You have no users yet!</p>
       )}
-      <Modal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        popup
-        size="md"
-      >
-        <Modal.Header />
-        <Modal.Body>
-          <div className="text-center">
-            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this user?
-            </h3>
-            <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleDeleteUser}>
-                Yes, I'm sure
-              </Button>
-              <Button color="gray" onClick={() => setShowModal(false)}>
-                No, cancel
-              </Button>
+
+      {/* Tailwind CSS ile Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-5 max-w-md w-full">
+            <div className="text-center">
+              <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 mb-4 mx-auto" />
+              <h3 className="mb-5 text-lg text-gray-500">
+                Are you sure you want to delete this user?
+              </h3>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={handleDeleteUser}
+                  className="p-2 text-white bg-red-500 rounded hover:bg-red-600"
+                >
+                  Yes, I'm sure
+                </button>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="p-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  No, cancel
+                </button>
+              </div>
             </div>
           </div>
-        </Modal.Body>
-      </Modal>
+        </div>
+      )}
     </div>
   );
 }
