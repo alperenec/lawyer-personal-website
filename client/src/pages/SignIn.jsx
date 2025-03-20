@@ -29,8 +29,8 @@ export default function SignIn() {
       dispatch(signInStart());
       console.log("Giriş için gönderilen veriler:", formData);
 
-      // API çağrısını 3002 portuna yapıyoruz
-      const res = await fetch("http://localhost:3002/api/auth/signin", {
+      // API çağrısını 3000 portuna yapıyoruz (3002 yerine)
+      const res = await fetch("http://localhost:3000/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

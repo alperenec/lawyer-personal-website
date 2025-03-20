@@ -31,7 +31,8 @@ export default function Articles() {
       try {
         setLoading(true);
 
-        let url = "http://localhost:3002/api/post/getposts?limit=9";
+        // 3002 yerine 3000 portunu kullanın
+        let url = "http://localhost:3000/api/post/getposts?limit=9";
         if (selectedCategory) {
           url += `&category=${selectedCategory}`;
         }
@@ -40,7 +41,9 @@ export default function Articles() {
         }
 
         console.log("Fetching posts from:", url);
-        const res = await fetch(url);
+        const res = await fetch(url, {
+          credentials: "include", // Cookie'leri de gönder
+        });
         console.log("API response status:", res.status);
 
         const data = await res.json();
@@ -69,7 +72,10 @@ export default function Articles() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:3002/api/post/getposts");
+        // 3002 yerine 3000 portunu kullanın
+        const res = await fetch("http://localhost:3000/api/post/getposts", {
+          credentials: "include", // Cookie'leri de gönder
+        });
         const data = await res.json();
 
         if (res.ok) {
@@ -90,7 +96,8 @@ export default function Articles() {
   const handleShowMore = async () => {
     const startIndex = posts.length;
     try {
-      let url = `http://localhost:3002/api/post/getposts?startIndex=${startIndex}&limit=9`;
+      // 3002 yerine 3000 portunu kullanın
+      let url = `http://localhost:3000/api/post/getposts?startIndex=${startIndex}&limit=9`;
       if (selectedCategory) {
         url += `&category=${selectedCategory}`;
       }
@@ -98,7 +105,9 @@ export default function Articles() {
         url += `&searchTerm=${searchTerm}`;
       }
 
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        credentials: "include", // Cookie'leri de gönder
+      });
       const data = await res.json();
 
       if (res.ok) {

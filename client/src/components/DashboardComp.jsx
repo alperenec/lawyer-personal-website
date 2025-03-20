@@ -10,14 +10,11 @@ import { Link } from "react-router-dom";
 
 export default function DashboardComp() {
   const [users, setUsers] = useState([]);
-  const [comments, setComments] = useState([]);
   const [posts, setPosts] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalPosts, setTotalPosts] = useState(0);
-  const [totalComments, setTotalComments] = useState(0);
   const [lastMonthUsers, setLastMonthUsers] = useState(0);
   const [lastMonthPosts, setLastMonthPosts] = useState(0);
-  const [lastMonthComments, setLastMonthComments] = useState(0);
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
 
@@ -68,33 +65,9 @@ export default function DashboardComp() {
       }
     };
 
-    const fetchComments = async () => {
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-        const res = await fetch(`${API_URL}/api/comment/getcomments?limit=5`, {
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setComments(data.comments);
-          setTotalComments(data.totalComments);
-          setLastMonthComments(data.lastMonthComments);
-        } else {
-          setError(data.message || "Failed to fetch comments");
-        }
-      } catch (error) {
-        setError(
-          error.message.includes("Failed to fetch")
-            ? "Could not connect to the server. Please ensure the backend is running."
-            : "Error fetching comments: " + error.message
-        );
-      }
-    };
-
     if (currentUser.isAdmin) {
       fetchUsers();
       fetchPosts();
-      fetchComments();
     }
   }, [currentUser]);
 
@@ -121,24 +94,7 @@ export default function DashboardComp() {
             <div className="text-gray-500">Last month</div>
           </div>
         </div>
-        <div className="flex flex-col p-3 bg-gray-100 dark:bg-gray-800 gap-4 md:w-72 w-full rounded-md shadow-md">
-          <div className="flex justify-between">
-            <div>
-              <h3 className="text-gray-500 text-md uppercase">
-                Total Comments
-              </h3>
-              <p className="text-2xl">{totalComments}</p>
-            </div>
-            <HiAnnotation className="bg-indigo-600 text-white rounded-full text-5xl p-3 shadow-lg" />
-          </div>
-          <div className="flex gap-2 text-sm">
-            <span className="text-green-500 flex items-center">
-              <HiArrowNarrowUp />
-              {lastMonthComments}
-            </span>
-            <div className="text-gray-500">Last month</div>
-          </div>
-        </div>
+
         <div className="flex flex-col p-3 bg-gray-100 dark:bg-gray-800 gap-4 md:w-72 w-full rounded-md shadow-md">
           <div className="flex justify-between">
             <div>
@@ -197,42 +153,7 @@ export default function DashboardComp() {
             </tbody>
           </table>
         </div>
-        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md bg-gray-100 dark:bg-gray-800">
-          <div className="flex justify-between p-3 text-sm font-semibold">
-            <h1 className="text-center p-2">Recent comments</h1>
-            <Link to="/dashboard?tab=comments">
-              <button className="p-2 text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded hover:from-purple-600 hover:to-pink-600">
-                See all
-              </button>
-            </Link>
-          </div>
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  Comment content
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Likes
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {comments &&
-                comments.map((comment) => (
-                  <tr
-                    key={comment._id}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  >
-                    <td className="px-6 py-4 w-96">
-                      <p className="line-clamp-2">{comment.content}</p>
-                    </td>
-                    <td className="px-6 py-4">{comment.numberOfLikes}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
+
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md bg-gray-100 dark:bg-gray-800">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className="text-center p-2">Recent posts</h1>

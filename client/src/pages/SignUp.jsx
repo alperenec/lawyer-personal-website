@@ -23,9 +23,9 @@ export default function SignUp() {
       setLoading(true);
       setErrorMessage(null);
 
-      // API çağrısını 3002 portuna yapıyoruz
+      // API çağrısını 3000 portuna yapıyoruz (3002 yerine)
       console.log("Kayıt için gönderilen veriler:", formData);
-      const res = await fetch("http://localhost:3002/api/auth/signup", {
+      const res = await fetch("http://localhost:3000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

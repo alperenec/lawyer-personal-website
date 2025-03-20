@@ -18,7 +18,8 @@ export default function OAuth() {
       setLoading(true);
       setError(null);
       const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
+      // Bu satırı kaldırdık çünkü CORS hatalarına sebep olabilir
+      // provider.setCustomParameters({ prompt: "select_account" });
 
       const resultsFromGoogle = await signInWithPopup(auth, provider);
       console.log("Google auth result:", {
@@ -27,7 +28,8 @@ export default function OAuth() {
         photo: resultsFromGoogle.user.photoURL,
       });
 
-      const res = await fetch("http://localhost:3002/api/auth/google", {
+      // API çağrısını 3000 portuna yapıyoruz (3002 yerine)
+      const res = await fetch("http://localhost:3000/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

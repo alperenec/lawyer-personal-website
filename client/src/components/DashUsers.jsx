@@ -13,7 +13,10 @@ export default function DashUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`/api/user/getusers`);
+        // Göreceli URL yerine tam URL kullanın
+        const res = await fetch(`http://localhost:3000/api/user/getusers`, {
+          credentials: "include", // Cookie'leri de gönder
+        });
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users);
@@ -33,7 +36,13 @@ export default function DashUsers() {
   const handleShowMore = async () => {
     const startIndex = users.length;
     try {
-      const res = await fetch(`/api/user/getusers?startIndex=${startIndex}`);
+      // Göreceli URL yerine tam URL kullanın
+      const res = await fetch(
+        `http://localhost:3000/api/user/getusers?startIndex=${startIndex}`,
+        {
+          credentials: "include", // Cookie'leri de gönder
+        }
+      );
       const data = await res.json();
       if (res.ok) {
         setUsers((prev) => [...prev, ...data.users]);
@@ -48,9 +57,14 @@ export default function DashUsers() {
 
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
-        method: "DELETE",
-      });
+      // Göreceli URL yerine tam URL kullanın
+      const res = await fetch(
+        `http://localhost:3000/api/user/delete/${userIdToDelete}`,
+        {
+          method: "DELETE",
+          credentials: "include", // Cookie'leri de gönder
+        }
+      );
       const data = await res.json();
       if (res.ok) {
         setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));

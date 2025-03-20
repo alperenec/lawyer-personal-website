@@ -27,8 +27,10 @@ export default function DashSidebar() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch("/api/user/signout", {
+      // API URL'sini tam olarak belirtin (göreceli URL yerine)
+      const res = await fetch("http://localhost:3000/api/user/signout", {
         method: "POST",
+        credentials: "include", // Cookie'lerin gönderilmesini sağlar
       });
       const data = await res.json();
       if (!res.ok) {
@@ -95,16 +97,6 @@ export default function DashSidebar() {
               >
                 <HiOutlineUserGroup className="text-xl" />
                 <span>Users</span>
-              </div>
-            </Link>
-            <Link to="/dashboard?tab=comments">
-              <div
-                className={`flex items-center gap-2 p-3 rounded-lg ${
-                  tab === "comments" ? "bg-gray-700" : "hover:bg-gray-700"
-                }`}
-              >
-                <HiAnnotation className="text-xl" />
-                <span>Comments</span>
               </div>
             </Link>
           </>

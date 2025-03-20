@@ -17,7 +17,13 @@ export default function PostPage() {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
+        // Göreceli URL yerine tam URL kullanın
+        const res = await fetch(
+          `http://localhost:3000/api/post/getposts?slug=${postSlug}`,
+          {
+            credentials: "include", // Cookie'leri de gönder
+          }
+        );
         const data = await res.json();
 
         if (!res.ok) {
@@ -47,7 +53,13 @@ export default function PostPage() {
   useEffect(() => {
     const fetchRecentPosts = async () => {
       try {
-        const res = await fetch(`/api/post/getposts?limit=3`);
+        // Göreceli URL yerine tam URL kullanın
+        const res = await fetch(
+          `http://localhost:3000/api/post/getposts?limit=3`,
+          {
+            credentials: "include", // Cookie'leri de gönder
+          }
+        );
         const data = await res.json();
 
         if (res.ok) {
