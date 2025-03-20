@@ -101,13 +101,18 @@ export default function DashProfile() {
     }
     try {
       dispatch(updateStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // Göreceli URL yerine tam URL kullanın
+      const res = await fetch(
+        `http://localhost:3000/api/user/update/${currentUser._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Cookie'leri de gönder
+          body: JSON.stringify(formData),
+        }
+      );
       const data = await res.json();
       if (!res.ok) {
         dispatch(updateFailure(data.message));
@@ -126,9 +131,14 @@ export default function DashProfile() {
     setShowModal(false);
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: "DELETE",
-      });
+      // Göreceli URL yerine tam URL kullanın
+      const res = await fetch(
+        `http://localhost:3000/api/user/delete/${currentUser._id}`,
+        {
+          method: "DELETE",
+          credentials: "include", // Cookie'leri de gönder
+        }
+      );
       const data = await res.json();
       if (!res.ok) {
         dispatch(deleteUserFailure(data.message));
@@ -142,8 +152,10 @@ export default function DashProfile() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch("/api/user/signout", {
+      // Göreceli URL yerine tam URL kullanın
+      const res = await fetch("http://localhost:3000/api/user/signout", {
         method: "POST",
+        credentials: "include", // Cookie'leri de gönder
       });
       const data = await res.json();
       if (!res.ok) {

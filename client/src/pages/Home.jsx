@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import FloatingContactButtons from "../components/FloatingContactButtons";
 import ServicesSection from "../components/ServicesSection";
 import Comments from "../components/Comments";
 import HeroSection from "../components/HeroSection";
-import Footer from "../components/Footer";
 import officeImage from "../assets/002.jpg";
-import styles from "./Home.module.css";
 
 const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -34,7 +31,7 @@ const Home = () => {
 
       {/* Main Content */}
       <main
-        className={`relative z-20 flex-grow pt-16 md:pt-28 pb-0 transition-opacity duration-700 ${
+        className={`relative z-20 flex-grow transition-opacity duration-700 ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -42,19 +39,14 @@ const Home = () => {
         <HeroSection />
 
         {/* Services Section */}
-        <div className="container max-w-6xl mx-auto px-4">
-          <ServicesSection />
+        <ServicesSection />
 
-          {/* Testimonials/Comments Section */}
-          <Comments />
-        </div>
+        {/* Testimonials/Comments Section */}
+        <Comments />
       </main>
 
       {/* Floating Contact Buttons */}
       <FloatingContactButtons />
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

@@ -4,9 +4,9 @@ import lawyerImage from "../assets/004.jpg"; // Avukat fotoğrafının path'i
 
 const HeroSection = () => {
   return (
-    <div className="relative w-full min-h-screen flex items-center justify-center">
-      {/* Ana içerik konteyneri */}
-      <div className="container max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-12">
+    <div className="w-full flex items-center justify-center pt-16">
+      {/* Ana içerik konteyneri - removed min-h-screen to avoid extra vertical space */}
+      <div className="container mx-auto px-4 py-8">
         {/* İki sütunlu grid yapısı */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Sol taraf - Yazılar ve buton */}
