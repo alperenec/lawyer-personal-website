@@ -293,7 +293,6 @@ export default function Articles() {
       </div>
 
       <FloatingContactButtons />
-      <Footer />
     </div>
   );
 }

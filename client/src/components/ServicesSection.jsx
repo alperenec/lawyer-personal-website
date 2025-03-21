@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const ServicesSection = () => {
+const ServicesSection = ({ hideTitle = false, noMargin = false }) => {
   const [selectedService, setSelectedService] = useState(
     "FIKRI MULKIYET HUKUKU"
   );
@@ -65,12 +65,19 @@ const ServicesSection = () => {
     },
   };
 
+  // Completely removed all margin and padding top classes
+  // from the section className to eliminate the unwanted space
   return (
-    <section className="mt-12 py-8 md:mt-16 md:py-12 relative z-20">
+    <section
+      className="py-8 relative z-20"
+      style={{ marginTop: 0, paddingTop: 0 }}
+    >
       <div className="container max-w-6xl mx-auto px-4">
-        <h2 className="text-2xl md:text-4xl font-bold text-white mb-6 md:mb-8 text-center">
-          HIZMETLERIMIZ
-        </h2>
+        {!hideTitle && (
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-6 md:mb-8 text-center">
+            HİZMETLERİMİZ
+          </h2>
+        )}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 mb-6 md:mb-8">
           {Object.keys(services).map((service) => (
             <button

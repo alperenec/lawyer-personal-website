@@ -6,7 +6,7 @@ import Footer from "./components/Footer";
 
 //css
 import "./components/Navbar.module.css";
-
+import "./pages/Services.module.css"; // Updated path to Services.module.css
 // Pages
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -17,6 +17,7 @@ import Dashboard from "./pages/Dashboard";
 import FAQ from "./pages/FAQ";
 import PostPage from "./pages/PostPage";
 import Services from "./pages/Services";
+import ServicesDetail from "./pages/ServicesDetail";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import UpdatePost from "./pages/UpdatePost";
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/services/:serviceSlug" element={<ServicesDetail />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
 

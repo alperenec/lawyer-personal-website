@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/yaldiz1.png";
-import "./Navbar.module.css";
+import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +28,9 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-black shadow-lg py-2" : "bg-black bg-opacity-70 py-3"
+        scrolled
+          ? "bg-black bg-opacity-70 shadow-lg py-2"
+          : "bg-transparent py-3"
       }`}
     >
       <div className="container mx-auto flex justify-between items-center px-6">
@@ -58,40 +60,50 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center space-x-8 mx-4">
           <Link
             to="/"
-            className={`nav-link text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
-              location.pathname === "/" ? "active-link" : ""
+            className={`${
+              styles["nav-link"]
+            } text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
+              location.pathname === "/" ? styles["active-link"] : ""
             }`}
           >
             Anasayfa
           </Link>
           <Link
             to="/about"
-            className={`nav-link text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200  ${
-              location.pathname === "/about" ? "active-link" : ""
+            className={`${
+              styles["nav-link"]
+            } text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
+              location.pathname === "/about" ? styles["active-link"] : ""
             }`}
           >
             Hakkımızda
           </Link>
           <Link
             to="/services"
-            className={`nav-link text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
-              location.pathname === "/services" ? "active-link" : ""
+            className={`${
+              styles["nav-link"]
+            } text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
+              location.pathname === "/services" ? styles["active-link"] : ""
             }`}
           >
             Hizmetlerimiz
           </Link>
           <Link
             to="/articles"
-            className={`nav-link text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
-              location.pathname === "/articles" ? "active-link" : ""
+            className={`${
+              styles["nav-link"]
+            } text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
+              location.pathname === "/articles" ? styles["active-link"] : ""
             }`}
           >
             Makaleler
           </Link>
           <Link
             to="/contact"
-            className={`nav-link text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
-              location.pathname === "/contact" ? "active-link" : ""
+            className={`${
+              styles["nav-link"]
+            } text-[#dcac2f] font-medium text-lg drop-shadow-lg relative py-2 hover:scale-105 transition-transform duration-200 ${
+              location.pathname === "/contact" ? styles["active-link"] : ""
             }`}
           >
             İletişim
@@ -179,8 +191,10 @@ const Navbar = () => {
           <div className="flex flex-col px-6 py-2">
             <Link
               to="/"
-              className={`nav-link text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
-                location.pathname === "/" ? "active-link" : ""
+              className={`${
+                styles["nav-link"]
+              } text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
+                location.pathname === "/" ? styles["active-link"] : ""
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -188,8 +202,10 @@ const Navbar = () => {
             </Link>
             <Link
               to="/about"
-              className={`nav-link text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
-                location.pathname === "/about" ? "active-link" : ""
+              className={`${
+                styles["nav-link"]
+              } text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
+                location.pathname === "/about" ? styles["active-link"] : ""
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -197,8 +213,10 @@ const Navbar = () => {
             </Link>
             <Link
               to="/services"
-              className={`nav-link text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
-                location.pathname === "/services" ? "active-link" : ""
+              className={`${
+                styles["nav-link"]
+              } text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
+                location.pathname === "/services" ? styles["active-link"] : ""
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -206,8 +224,10 @@ const Navbar = () => {
             </Link>
             <Link
               to="/articles"
-              className={`nav-link text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
-                location.pathname === "/articles" ? "active-link" : ""
+              className={`${
+                styles["nav-link"]
+              } text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
+                location.pathname === "/articles" ? styles["active-link"] : ""
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -215,8 +235,10 @@ const Navbar = () => {
             </Link>
             <Link
               to="/contact"
-              className={`nav-link text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
-                location.pathname === "/contact" ? "active-link" : ""
+              className={`${
+                styles["nav-link"]
+              } text-[#dcac2f] py-3 border-b border-gray-800 text-lg hover:bg-[#dcac2f] hover:bg-opacity-20 px-2 rounded transition-all duration-200 ${
+                location.pathname === "/contact" ? styles["active-link"] : ""
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -232,26 +254,6 @@ const Navbar = () => {
           </div>
         </div>
       )}
-
-      {/* Stil tanımlamaları */}
-      <style>{`
-        .nav-link::after {
-          content: "";
-          position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: 0;
-          left: 0;
-          background-color: #dcac2f;
-          transition: width 0.3s ease;
-        }
-        .nav-link:hover::after {
-          width: 100%;
-        }
-        .active-link::after {
-          width: 100%;
-        }
-      `}</style>
     </nav>
   );
 };

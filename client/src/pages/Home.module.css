@@ -1,30 +1,138 @@
-/* Responsive behavior for the image wrapper */
+/* Enhanced responsive behavior for the image wrapper */
 .imageWrapper {
-    display: block; /* Show on all screens */
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.imageWrapper img {
+  transition: transform 0.5s ease;
+}
+
+.imageWrapper:hover img {
+  transform: scale(1.05);
+}
+
+/* Custom container class to ensure consistent margins */
+.customContainer {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .customContainer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .customContainer {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Section spacing */
+.sectionSpacing {
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .sectionSpacing {
+    margin-bottom: 5rem;
+  }
+}
+
+/* Responsive adjustments for hero section */
+@media (max-width: 767px) {
+  .heroText {
+    text-align: center;
   }
   
-  /* Make image more optimized for mobile */
-  @media (max-width: 767px) {
-    .imageWrapper img {
-      max-height: 280px;
-      margin: 0 auto;
-    }
+  .heroText button {
+    margin-left: auto;
+    margin-right: auto;
   }
-  
-  /* Responsive adjustments for the services grid */
-  @media (max-width: 640px) {
-    .grid {
-      grid-template-columns: repeat(2, 1fr) !important; /* Override Tailwind if needed */
-    }
+}
+
+/* Responsive adjustments for the services grid */
+@media (max-width: 640px) {
+  .servicesGrid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
   }
-  
-  @media (max-width: 480px) {
-    .grid {
-      grid-template-columns: 1fr !important; /* Override Tailwind if needed */
-    }
-  
-    button {
-      font-size: 0.75rem !important; /* Override Tailwind if needed */
-      padding: 0.5rem 1rem !important;
-    }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .servicesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
   }
+}
+
+@media (min-width: 1024px) {
+  .servicesGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+}
+
+/* Animations */
+.fadeIn {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.slideIn {
+  animation: slideIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Gold accent color with hover effect */
+.goldAccent {
+  color: #dcac2f;
+  transition: color 0.3s ease;
+}
+
+.goldAccent:hover {
+  color: #b5872c;
+}
+
+/* Button styling with animation */
+.animatedButton {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.animatedButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.animatedButton:active {
+  transform: translateY(-1px);
+}

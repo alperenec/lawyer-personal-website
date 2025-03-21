@@ -1,0 +1,21 @@
+/* Services page specific styling */
+.services-override h2 {
+    display: none !important; /* Hide the HİZMETLERİMİZ title in ServicesSection */
+  }
+  
+  /* Remove margin-top and padding-top from the section */
+  .services-override section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  
+  /* Remove padding-top from the container */
+  .services-override .container {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Additional specific targeting to remove all top spacing */
+  .services-override section > * {
+    margin-top: 0 !important;
+  }
