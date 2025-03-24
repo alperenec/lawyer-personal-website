@@ -185,7 +185,6 @@ const About = () => {
       </div>
 
       <FloatingContactButtons />
-      <Footer />
     </div>
   );
 };
