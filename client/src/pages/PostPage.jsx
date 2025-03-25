@@ -194,12 +194,14 @@ export default function PostPage() {
             </div>
           </div>
 
-          {/* Makale Görseli */}
-          <img
-            src={post.image}
-            alt={post.title}
-            className="w-full h-auto max-h-[600px] object-cover"
-          />
+          {/* Makale Görseli - Düzeltilmiş boyut ve kırpma özellikleri */}
+          <div className="flex justify-center p-4 bg-gray-900">
+            <img
+              src={post.image}
+              alt={post.title}
+              className="max-w-full max-h-[400px] object-contain"
+            />
+          </div>
 
           {/* Makale İçeriği */}
           <div className="p-6">

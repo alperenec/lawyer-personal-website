@@ -170,11 +170,13 @@ export default function CreatePost() {
           </div>
         )}
         {formData.image && (
-          <img
-            src={formData.image}
-            alt="upload"
-            className="w-full h-72 object-cover"
-          />
+          <div className="flex justify-center bg-gray-100 p-2 rounded-md">
+            <img
+              src={formData.image}
+              alt="upload"
+              className="max-h-60 object-contain"
+            />
+          </div>
         )}
         <textarea
           placeholder="Write your post content here..."

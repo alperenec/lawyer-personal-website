@@ -18,11 +18,13 @@ export default function PostCard({ post }) {
         to={`/post/${post.slug}`}
         className="block h-[180px] overflow-hidden"
       >
-        <img
-          src={post.image}
-          alt={post.title}
-          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        <div className="h-full w-full bg-gray-900 flex items-center justify-center p-2">
+          <img
+            src={post.image}
+            alt={post.title}
+            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+          />
+        </div>
       </Link>
 
       <div className="flex flex-col flex-grow p-4">
