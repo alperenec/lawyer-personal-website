@@ -11,20 +11,20 @@ export default function DashPosts() {
   const [postIdToDelete, setPostIdToDelete] = useState("");
   const [error, setError] = useState(null);
 
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
         const res = await fetch(
-          `${API_URL}/api/post/getposts?userId=${currentUser._id}`,
+          `${API_URL}/post/getposts?userId=${currentUser._id}`,
           { credentials: "include" }
         );
         const data = await res.json();
         if (res.ok) {
           setUserPosts(data.posts);
-          if (data.posts.length < 9) {
-            setShowMore(false);
-          }
+          if (data.posts.length < 9) setShowMore(false);
         } else {
           setError(data.message || "Failed to fetch posts");
         }
@@ -36,25 +36,20 @@ export default function DashPosts() {
         );
       }
     };
-    if (currentUser.isAdmin) {
-      fetchPosts();
-    }
+    if (currentUser.isAdmin) fetchPosts();
   }, [currentUser._id]);
 
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
       const res = await fetch(
-        `${API_URL}/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`,
+        `${API_URL}/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`,
         { credentials: "include" }
       );
       const data = await res.json();
       if (res.ok) {
         setUserPosts((prev) => [...prev, ...data.posts]);
-        if (data.posts.length < 9) {
-          setShowMore(false);
-        }
+        if (data.posts.length < 9) setShowMore(false);
       } else {
         setError(data.message || "Failed to fetch more posts");
       }
@@ -70,9 +65,8 @@ export default function DashPosts() {
   const handleDeletePost = async () => {
     setShowModal(false);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
       const res = await fetch(
-        `${API_URL}/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+        `${API_URL}/post/deletepost/${postIdToDelete}/${currentUser._id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -122,7 +116,6 @@ export default function DashPosts() {
               </button>
             </Link>
           </div>
-
           <table className="shadow-md w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -229,7 +222,6 @@ export default function DashPosts() {
           </Link>
         </div>
       )}
-
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-5 max-w-md w-full">

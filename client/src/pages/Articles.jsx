@@ -16,7 +16,9 @@ export default function Articles() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
 
-  // Get category from URL if present
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const categoryParam = urlParams.get("category");
@@ -25,25 +27,16 @@ export default function Articles() {
     }
   }, [location.search]);
 
-  // Fetch posts based on filters
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-
-        // 3002 yerine 3000 portunu kullanın
-        let url = "http://localhost:3000/api/post/getposts?limit=9";
-        if (selectedCategory) {
-          url += `&category=${selectedCategory}`;
-        }
-        if (searchTerm) {
-          url += `&searchTerm=${searchTerm}`;
-        }
+        let url = `${API_URL}/post/getposts?limit=9`;
+        if (selectedCategory) url += `&category=${selectedCategory}`;
+        if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
         console.log("Fetching posts from:", url);
-        const res = await fetch(url, {
-          credentials: "include", // Cookie'leri de gönder
-        });
+        const res = await fetch(url, { credentials: "include" });
         console.log("API response status:", res.status);
 
         const data = await res.json();
@@ -56,7 +49,6 @@ export default function Articles() {
           setError(true);
           console.error("API error:", data);
         }
-
         setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -64,22 +56,17 @@ export default function Articles() {
         setLoading(false);
       }
     };
-
     fetchPosts();
   }, [selectedCategory, searchTerm]);
 
-  // Fetch all categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // 3002 yerine 3000 portunu kullanın
-        const res = await fetch("http://localhost:3000/api/post/getposts", {
-          credentials: "include", // Cookie'leri de gönder
+        const res = await fetch(`${API_URL}/post/getposts`, {
+          credentials: "include",
         });
         const data = await res.json();
-
         if (res.ok) {
-          // Extract unique categories from posts
           const uniqueCategories = [
             ...new Set((data.posts || []).map((post) => post.category)),
           ];
@@ -89,27 +76,18 @@ export default function Articles() {
         console.error("Error fetching categories:", error);
       }
     };
-
     fetchCategories();
   }, []);
 
   const handleShowMore = async () => {
     const startIndex = posts.length;
     try {
-      // 3002 yerine 3000 portunu kullanın
-      let url = `http://localhost:3000/api/post/getposts?startIndex=${startIndex}&limit=9`;
-      if (selectedCategory) {
-        url += `&category=${selectedCategory}`;
-      }
-      if (searchTerm) {
-        url += `&searchTerm=${searchTerm}`;
-      }
+      let url = `${API_URL}/post/getposts?startIndex=${startIndex}&limit=9`;
+      if (selectedCategory) url += `&category=${selectedCategory}`;
+      if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
-      const res = await fetch(url, {
-        credentials: "include", // Cookie'leri de gönder
-      });
+      const res = await fetch(url, { credentials: "include" });
       const data = await res.json();
-
       if (res.ok) {
         setPosts((prev) => [...prev, ...(data.posts || [])]);
         setShowMore((data.posts || []).length >= 9);
@@ -121,38 +99,28 @@ export default function Articles() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Search is triggered by the searchTerm state change in useEffect
   };
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    // Reset posts when changing category
     setPosts([]);
   };
 
   return (
     <div className="min-h-screen relative">
-      {/* Siyah arka plan katmanı */}
       <div className="fixed inset-0 bg-black z-0"></div>
-
-      {/* Ofis görseli katmanı - düşük opaklık ile */}
       <div
         className="fixed inset-0 bg-cover bg-center opacity-30 z-10"
         style={{ backgroundImage: `url(${officeImage})` }}
       ></div>
-
       <Navbar />
-
       <div className="relative z-20 pt-36 px-6 md:px-12 lg:px-24 pb-20">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-10 heading-font">
             Makaleler
           </h1>
-
-          {/* Filtreler */}
           <div className="bg-black bg-opacity-70 p-6 rounded-lg shadow-lg mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              {/* Arama Formu */}
               <form onSubmit={handleSearch} className="flex-1">
                 <div className="relative">
                   <input
@@ -178,8 +146,6 @@ export default function Articles() {
                   </svg>
                 </div>
               </form>
-
-              {/* Kategori Filtresi */}
               <div className="flex-shrink-0 w-full md:w-auto">
                 <select
                   value={selectedCategory}
@@ -196,8 +162,6 @@ export default function Articles() {
               </div>
             </div>
           </div>
-
-          {/* Makaleler */}
           <div className="bg-black bg-opacity-70 p-6 rounded-lg shadow-lg">
             {loading ? (
               <div className="flex justify-center items-center py-20">
@@ -222,7 +186,6 @@ export default function Articles() {
                     <PostCard key={post._id} post={post} />
                   ))}
                 </div>
-
                 {showMore && (
                   <div className="mt-10 text-center">
                     <button
@@ -255,14 +218,11 @@ export default function Articles() {
               </div>
             )}
           </div>
-
-          {/* Kategori Bölümü */}
           {categories.length > 0 && (
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-white mb-6">
                 Kategorilere Göre Keşfet
               </h2>
-
               <div className="flex flex-wrap gap-3">
                 {categories.map((category) => (
                   <button
@@ -277,7 +237,6 @@ export default function Articles() {
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </button>
                 ))}
-
                 {selectedCategory && (
                   <button
                     onClick={() => handleCategoryChange("")}
@@ -291,7 +250,6 @@ export default function Articles() {
           )}
         </div>
       </div>
-
       <FloatingContactButtons />
     </div>
   );

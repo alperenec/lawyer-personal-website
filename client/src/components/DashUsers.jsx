@@ -10,12 +10,14 @@ export default function DashUsers() {
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState("");
 
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // Göreceli URL yerine tam URL kullanın
-        const res = await fetch(`http://localhost:3000/api/user/getusers`, {
-          credentials: "include", // Cookie'leri de gönder
+        const res = await fetch(`${API_URL}/user/getusers`, {
+          credentials: "include",
         });
         const data = await res.json();
         if (res.ok) {
@@ -36,11 +38,10 @@ export default function DashUsers() {
   const handleShowMore = async () => {
     const startIndex = users.length;
     try {
-      // Göreceli URL yerine tam URL kullanın
       const res = await fetch(
-        `http://localhost:3000/api/user/getusers?startIndex=${startIndex}`,
+        `${API_URL}/user/getusers?startIndex=${startIndex}`,
         {
-          credentials: "include", // Cookie'leri de gönder
+          credentials: "include",
         }
       );
       const data = await res.json();
@@ -57,14 +58,10 @@ export default function DashUsers() {
 
   const handleDeleteUser = async () => {
     try {
-      // Göreceli URL yerine tam URL kullanın
-      const res = await fetch(
-        `http://localhost:3000/api/user/delete/${userIdToDelete}`,
-        {
-          method: "DELETE",
-          credentials: "include", // Cookie'leri de gönder
-        }
-      );
+      const res = await fetch(`${API_URL}/user/delete/${userIdToDelete}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       const data = await res.json();
       if (res.ok) {
         setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
@@ -157,7 +154,6 @@ export default function DashUsers() {
         <p>You have no users yet!</p>
       )}
 
-      {/* Tailwind CSS ile Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-5 max-w-md w-full">

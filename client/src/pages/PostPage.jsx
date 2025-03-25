@@ -13,17 +13,16 @@ export default function PostPage() {
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
 
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        // Göreceli URL yerine tam URL kullanın
-        const res = await fetch(
-          `http://localhost:3000/api/post/getposts?slug=${postSlug}`,
-          {
-            credentials: "include", // Cookie'leri de gönder
-          }
-        );
+        const res = await fetch(`${API_URL}/post/getposts?slug=${postSlug}`, {
+          credentials: "include",
+        });
         const data = await res.json();
 
         if (!res.ok) {
@@ -46,24 +45,17 @@ export default function PostPage() {
         setLoading(false);
       }
     };
-
     fetchPost();
   }, [postSlug]);
 
   useEffect(() => {
     const fetchRecentPosts = async () => {
       try {
-        // Göreceli URL yerine tam URL kullanın
-        const res = await fetch(
-          `http://localhost:3000/api/post/getposts?limit=3`,
-          {
-            credentials: "include", // Cookie'leri de gönder
-          }
-        );
+        const res = await fetch(`${API_URL}/post/getposts?limit=3`, {
+          credentials: "include",
+        });
         const data = await res.json();
-
         if (res.ok) {
-          // Filter out the current post from recent posts
           const filteredPosts = data.posts.filter((p) => p.slug !== postSlug);
           setRecentPosts(filteredPosts.slice(0, 3));
         }
@@ -71,7 +63,6 @@ export default function PostPage() {
         console.log(error.message);
       }
     };
-
     fetchRecentPosts();
   }, [postSlug]);
 
@@ -123,17 +114,13 @@ export default function PostPage() {
         className="fixed inset-0 bg-cover bg-center opacity-30 z-10"
         style={{ backgroundImage: `url(${officeImage})` }}
       ></div>
-
       <Navbar />
-
       <main className="relative z-20 max-w-6xl mx-auto px-4 pt-36 pb-20">
         <div className="bg-black bg-opacity-70 rounded-lg shadow-lg overflow-hidden">
-          {/* Makale Başlığı ve Meta Bilgiler */}
           <div className="p-6 border-b border-gray-700">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
               {post.title}
             </h1>
-
             <div className="flex flex-wrap items-center text-sm text-gray-400 gap-4">
               <span className="flex items-center">
                 <svg
@@ -152,7 +139,6 @@ export default function PostPage() {
                 </svg>
                 {new Date(post.createdAt).toLocaleDateString("tr-TR")}
               </span>
-
               <Link
                 to={`/articles?category=${post.category}`}
                 className="flex items-center"
@@ -173,7 +159,6 @@ export default function PostPage() {
                 </svg>
                 {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
               </Link>
-
               <span className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -193,8 +178,6 @@ export default function PostPage() {
               </span>
             </div>
           </div>
-
-          {/* Makale Görseli - Düzeltilmiş boyut ve kırpma özellikleri */}
           <div className="flex justify-center p-4 bg-gray-900">
             <img
               src={post.image}
@@ -202,8 +185,6 @@ export default function PostPage() {
               className="max-w-full max-h-[400px] object-contain"
             />
           </div>
-
-          {/* Makale İçeriği */}
           <div className="p-6">
             <div
               className="text-gray-300 prose prose-invert max-w-none"
@@ -211,14 +192,11 @@ export default function PostPage() {
             ></div>
           </div>
         </div>
-
-        {/* Diğer Makaleler Bölümü */}
         {recentPosts.length > 0 && (
           <div className="mt-12">
             <h2 className="text-2xl font-bold text-white mb-6">
               Diğer Makaleler
             </h2>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {recentPosts.map((post) => (
                 <PostCard key={post._id} post={post} />
@@ -227,7 +205,6 @@ export default function PostPage() {
           </div>
         )}
       </main>
-
       <FloatingContactButtons />
       <Footer />
     </div>

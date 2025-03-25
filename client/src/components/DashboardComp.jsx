@@ -18,11 +18,13 @@ export default function DashboardComp() {
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
 
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-        const res = await fetch(`${API_URL}/api/user/getusers?limit=5`, {
+        const res = await fetch(`${API_URL}/user/getusers?limit=5`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -44,8 +46,7 @@ export default function DashboardComp() {
 
     const fetchPosts = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-        const res = await fetch(`${API_URL}/api/post/getposts?limit=5`, {
+        const res = await fetch(`${API_URL}/post/getposts?limit=5`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -94,7 +95,6 @@ export default function DashboardComp() {
             <div className="text-gray-500">Last month</div>
           </div>
         </div>
-
         <div className="flex flex-col p-3 bg-gray-100 dark:bg-gray-800 gap-4 md:w-72 w-full rounded-md shadow-md">
           <div className="flex justify-between">
             <div>
@@ -153,7 +153,6 @@ export default function DashboardComp() {
             </tbody>
           </table>
         </div>
-
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md bg-gray-100 dark:bg-gray-800">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className="text-center p-2">Recent posts</h1>

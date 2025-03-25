@@ -17,6 +17,9 @@ export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState("");
 
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
@@ -27,10 +30,9 @@ export default function DashSidebar() {
 
   const handleSignout = async () => {
     try {
-      // API URL'sini tam olarak belirtin (göreceli URL yerine)
-      const res = await fetch("http://localhost:3000/api/user/signout", {
+      const res = await fetch(`${API_URL}/user/signout`, {
         method: "POST",
-        credentials: "include", // Cookie'lerin gönderilmesini sağlar
+        credentials: "include",
       });
       const data = await res.json();
       if (!res.ok) {
@@ -88,18 +90,16 @@ export default function DashSidebar() {
           </Link>
         )}
         {currentUser.isAdmin && (
-          <>
-            <Link to="/dashboard?tab=users">
-              <div
-                className={`flex items-center gap-2 p-3 rounded-lg ${
-                  tab === "users" ? "bg-gray-700" : "hover:bg-gray-700"
-                }`}
-              >
-                <HiOutlineUserGroup className="text-xl" />
-                <span>Users</span>
-              </div>
-            </Link>
-          </>
+          <Link to="/dashboard?tab=users">
+            <div
+              className={`flex items-center gap-2 p-3 rounded-lg ${
+                tab === "users" ? "bg-gray-700" : "hover:bg-gray-700"
+              }`}
+            >
+              <HiOutlineUserGroup className="text-xl" />
+              <span>Users</span>
+            </div>
+          </Link>
         )}
         <div
           onClick={handleSignout}

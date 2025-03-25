@@ -12,31 +12,25 @@ export default function UpdatePost() {
   const [publishError, setPublishError] = useState(null);
   const [loading, setLoading] = useState(true);
   const { postId } = useParams();
-
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
+
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
       try {
-        // Use the full URL with API_URL environment variable
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-        const res = await fetch(
-          `${API_URL}/api/post/getposts?postId=${postId}`,
-          {
-            credentials: "include",
-          }
-        );
-
-        // Check if response is JSON
+        const res = await fetch(`${API_URL}/post/getposts?postId=${postId}`, {
+          credentials: "include",
+        });
         const contentType = res.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           throw new Error("Server returned non-JSON response");
         }
 
         const data = await res.json();
-
         if (!res.ok) {
           console.error("Error response:", data);
           setPublishError(data.message || "Failed to fetch post");
@@ -57,10 +51,7 @@ export default function UpdatePost() {
         setLoading(false);
       }
     };
-
-    if (postId) {
-      fetchPost();
-    }
+    if (postId) fetchPost();
   }, [postId]);
 
   const handleUploadImage = async () => {
@@ -70,14 +61,11 @@ export default function UpdatePost() {
         return;
       }
       setImageUploadError(null);
-
       const formData = new FormData();
       formData.append("file", file);
-
       setImageUploadProgress(1);
 
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-      const res = await fetch(`${API_URL}/api/upload`, {
+      const res = await fetch(`${API_URL}/upload`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -94,12 +82,7 @@ export default function UpdatePost() {
       }
 
       const data = await res.json();
-
-      setFormData((prev) => ({
-        ...prev,
-        image: data.url,
-      }));
-
+      setFormData((prev) => ({ ...prev, image: data.url }));
       setImageUploadProgress(null);
       setImageUploadError(null);
     } catch (error) {
@@ -112,15 +95,12 @@ export default function UpdatePost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
       const res = await fetch(
-        `${API_URL}/api/post/updatepost/${formData._id}/${currentUser._id}`,
+        `${API_URL}/post/updatepost/${formData._id}/${currentUser._id}`,
         {
           method: "PUT",
           credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         }
       );
@@ -143,7 +123,6 @@ export default function UpdatePost() {
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Update Post</h1>
-
       {loading ? (
         <div className="flex justify-center items-center h-40">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
@@ -227,9 +206,9 @@ export default function UpdatePost() {
             className="p-2 h-72 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
             value={formData.content || ""}
-            onChange={(e) => {
-              setFormData({ ...formData, content: e.target.value });
-            }}
+            onChange={(e) =>
+              setFormData({ ...formData, content: e.target.value })
+            }
           />
           <button
             type="submit"

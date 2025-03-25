@@ -36,6 +36,9 @@ export default function DashProfile() {
   const filePickerRef = useRef();
   const dispatch = useDispatch();
 
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -45,9 +48,7 @@ export default function DashProfile() {
   };
 
   useEffect(() => {
-    if (imageFile) {
-      uploadImage();
-    }
+    if (imageFile) uploadImage();
   }, [imageFile]);
 
   const uploadImage = async () => {
@@ -101,18 +102,12 @@ export default function DashProfile() {
     }
     try {
       dispatch(updateStart());
-      // Göreceli URL yerine tam URL kullanın
-      const res = await fetch(
-        `http://localhost:3000/api/user/update/${currentUser._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Cookie'leri de gönder
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch(`${API_URL}/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
       const data = await res.json();
       if (!res.ok) {
         dispatch(updateFailure(data.message));
@@ -131,14 +126,10 @@ export default function DashProfile() {
     setShowModal(false);
     try {
       dispatch(deleteUserStart());
-      // Göreceli URL yerine tam URL kullanın
-      const res = await fetch(
-        `http://localhost:3000/api/user/delete/${currentUser._id}`,
-        {
-          method: "DELETE",
-          credentials: "include", // Cookie'leri de gönder
-        }
-      );
+      const res = await fetch(`${API_URL}/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       const data = await res.json();
       if (!res.ok) {
         dispatch(deleteUserFailure(data.message));
@@ -152,10 +143,9 @@ export default function DashProfile() {
 
   const handleSignout = async () => {
     try {
-      // Göreceli URL yerine tam URL kullanın
-      const res = await fetch("http://localhost:3000/api/user/signout", {
+      const res = await fetch(`${API_URL}/user/signout`, {
         method: "POST",
-        credentials: "include", // Cookie'leri de gönder
+        credentials: "include",
       });
       const data = await res.json();
       if (!res.ok) {
@@ -214,13 +204,11 @@ export default function DashProfile() {
             }`}
           />
         </div>
-
         {imageFileUploadError && (
           <div className="p-3 bg-red-100 text-red-700 border border-red-400 rounded">
             {imageFileUploadError}
           </div>
         )}
-
         <input
           type="text"
           id="username"
@@ -244,7 +232,6 @@ export default function DashProfile() {
           onChange={handleChange}
           className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
-
         <button
           type="submit"
           disabled={loading || imageFileUploading}
@@ -254,8 +241,6 @@ export default function DashProfile() {
         >
           {loading ? "Loading..." : "Update"}
         </button>
-
-        {/* "Create a post" butonu - Tüm kullanıcılar için görünür */}
         <Link to={"/create-post"}>
           <button
             type="button"
@@ -265,7 +250,6 @@ export default function DashProfile() {
           </button>
         </Link>
       </form>
-
       <div className="text-red-500 flex justify-between mt-5">
         <span
           onClick={() => setShowModal(true)}
@@ -280,7 +264,6 @@ export default function DashProfile() {
           Sign Out
         </span>
       </div>
-
       {updateUserSuccess && (
         <div className="p-3 mt-5 bg-green-100 text-green-700 border border-green-400 rounded">
           {updateUserSuccess}
@@ -296,7 +279,6 @@ export default function DashProfile() {
           {error}
         </div>
       )}
-
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-5 max-w-md w-full">
