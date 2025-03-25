@@ -103,6 +103,26 @@ export default function DashPosts() {
     <div className="table-auto overflow-x-scroll md:mx-auto p-3">
       {currentUser.isAdmin && userPosts.length > 0 ? (
         <>
+          <div className="flex justify-end mb-4">
+            <Link to="/create-post">
+              <button className="p-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition duration-200 flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Yeni Makale Oluştur
+              </button>
+            </Link>
+          </div>
+
           <table className="shadow-md w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -137,11 +157,13 @@ export default function DashPosts() {
                   </td>
                   <td className="px-6 py-4">
                     <Link to={`/post/${post.slug}`}>
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-20 h-10 object-cover bg-gray-500"
-                      />
+                      <div className="w-20 h-10 flex items-center justify-center bg-gray-900">
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="max-h-10 max-w-20 object-contain"
+                        />
+                      </div>
                     </Link>
                   </td>
                   <td className="px-6 py-4">
@@ -186,7 +208,26 @@ export default function DashPosts() {
           )}
         </>
       ) : (
-        <p>You have no posts yet!</p>
+        <div className="text-center py-10">
+          <p className="text-lg mb-4">Henüz makaleniz bulunmuyor!</p>
+          <Link to="/create-post">
+            <button className="p-3 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition duration-200 flex items-center mx-auto">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              İlk Makalenizi Oluşturun
+            </button>
+          </Link>
+        </div>
       )}
 
       {showModal && (
