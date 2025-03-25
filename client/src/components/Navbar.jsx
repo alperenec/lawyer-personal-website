@@ -25,6 +25,19 @@ const Navbar = () => {
     };
   }, [scrolled]);
 
+  // Sayfa başına kaydırma fonksiyonu
+  const scrollToTop = (e) => {
+    // Eğer zaten anasayfadaysak, sayfanın en üstüne kaydır
+    if (location.pathname === "/") {
+      e.preventDefault(); // Default link davranışını engelle
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
@@ -34,25 +47,22 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto flex justify-between items-center px-6">
-        {/* Logo ve isim alanı */}
+        {/* Logo ve isim alanı - Tek bir link içerisinde */}
         <div className="flex items-center space-x-3 md:ml-4">
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center" onClick={scrollToTop}>
             <img
               src={logo}
               alt="Logo"
               className="h-16 w-auto transition-all duration-300"
             />
-          </Link>
-          <Link
-            to="/"
-            className="flex flex-col items-start justify-center gap-0 ml-2 cursor-pointer"
-          >
-            <span className="text-xl font-semibold text-[#dcac2f] drop-shadow-lg tracking-wide text-left">
-              Av.
-            </span>
-            <span className="text-2xl font-semibold text-[#dcac2f] drop-shadow-lg tracking-wide text-left">
-              Zafer Tağa
-            </span>
+            <div className="flex flex-col items-start justify-center gap-0 ml-2">
+              <span className="text-xl font-semibold text-[#dcac2f] drop-shadow-lg tracking-wide text-left">
+                Av.
+              </span>
+              <span className="text-2xl font-semibold text-[#dcac2f] drop-shadow-lg tracking-wide text-left">
+                Zafer Tağa
+              </span>
+            </div>
           </Link>
         </div>
 

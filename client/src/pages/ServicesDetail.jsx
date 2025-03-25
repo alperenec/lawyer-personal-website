@@ -343,7 +343,7 @@ const ServicesDetail = () => {
           {/* Service content */}
           <div className="bg-gray-900 bg-opacity-80 p-6 md:p-8 rounded-lg mb-8">
             <div
-              className="prose prose-lg prose-invert max-w-none"
+              className="text-white prose prose-lg prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: currentService.content }}
             ></div>
           </div>
