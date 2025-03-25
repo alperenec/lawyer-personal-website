@@ -25,6 +25,7 @@ const rootDir = path.resolve(__dirname, "..");
 console.log("Environment Variables Loaded:", {
   PORT: process.env.PORT,
   MONGO: process.env.MONGO,
+  CLIENT_URL: process.env.CLIENT_URL,
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY
     ? "Set (masked)"
@@ -41,6 +42,7 @@ if (!fs.existsSync(tempDir)) {
   console.log("Created temporary uploads directory at:", tempDir);
 }
 
+// MongoDB connection
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
@@ -52,9 +54,10 @@ mongoose
 
 const app = express();
 
+// CORS configuration with dynamic client URL
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
