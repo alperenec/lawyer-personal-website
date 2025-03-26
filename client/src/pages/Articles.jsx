@@ -17,9 +17,8 @@ export default function Articles() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
 
-  // Get API URL from environment variables or use a fallback
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "https://zafer-taga--gilt.vercel.app";
+  // Sabit API URL kullanın (ortam değişkenleri yerine)
+  const API_URL = "https://zafer-taga.vercel.app";
 
   // Handle URL parameters for category filtering
   useEffect(() => {
@@ -45,14 +44,12 @@ export default function Articles() {
 
         console.log("Fetching posts from:", url);
 
-        // Enhanced fetch with proper CORS headers
+        // Enhanced fetch with proper CORS headers but without credentials
         const response = await fetch(url, {
           method: "GET",
-          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Origin: window.location.origin,
           },
           mode: "cors",
         });
@@ -90,21 +87,17 @@ export default function Articles() {
       );
       setLoading(false);
     }
-  }, [selectedCategory, searchTerm, API_URL]);
+  }, [selectedCategory, searchTerm]);
 
   // Fetch categories for the filter
   useEffect(() => {
     const fetchCategories = async () => {
-      if (!API_URL) return;
-
       try {
         const response = await fetch(`${API_URL}/api/post/getposts`, {
           method: "GET",
-          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Origin: window.location.origin,
           },
           mode: "cors",
         });
@@ -132,7 +125,7 @@ export default function Articles() {
     };
 
     fetchCategories();
-  }, [API_URL]);
+  }, []);
 
   // Function to load more posts
   const handleShowMore = async () => {
@@ -145,11 +138,9 @@ export default function Articles() {
 
       const response = await fetch(url, {
         method: "GET",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Origin: window.location.origin,
         },
         mode: "cors",
       });
@@ -344,6 +335,7 @@ export default function Articles() {
       </div>
 
       <FloatingContactButtons />
+      <Footer />
     </div>
   );
 }

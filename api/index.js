@@ -21,25 +21,10 @@ dotenv.config();
 // Fix the path to better handle directory structure
 const rootDir = path.resolve(__dirname, "..");
 
-// Check environment variables
-console.log("Environment Variables Loaded:", {
-  PORT: process.env.PORT,
-  MONGO: process.env.MONGO,
-  CLIENT_URL: process.env.CLIENT_URL,
-  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
-  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY
-    ? "Set (masked)"
-    : "Not set",
-  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET
-    ? "Set (masked)"
-    : "Not set",
-});
-
-// Create temp directory for uploads if it doesn't exist
+// Create temp directory if it doesn't exist
 const tempDir = path.join(rootDir, "temp");
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
-  console.log("Created temporary uploads directory at:", tempDir);
 }
 
 // MongoDB connection
@@ -54,21 +39,28 @@ mongoose
 
 const app = express();
 
-// CORS configuration - made more explicit
+// En basit CORS yapılandırması, herhangi bir middleware kullanmadan
 app.use((req, res, next) => {
-  // Allow all origins
-  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
+  // İstek yapılan origin'e izin ver ya da tümüne izin ver
+  const origin = req.headers.origin || "*";
+  res.setHeader("Access-Control-Allow-Origin", origin);
+
+  // Credentialsları etkinleştir
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  // Tüm HTTP metodlarına izin ver
+  res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, Origin"
+    "GET, POST, PUT, DELETE, OPTIONS"
   );
 
-  // Handle preflight requests
+  // Gerekli başlıklara izin ver
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+
+  // Preflight isteklerini hemen yanıtla
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -76,41 +68,25 @@ app.use((req, res, next) => {
   next();
 });
 
-// Standard CORS middleware as backup
-app.use(
-  cors({
-    origin: true, // Uses req.headers.origin
-    credentials: true,
-  })
-);
-
+// Standart middleware'ler
 app.use(express.json());
 app.use(cookieParser());
 
-// API routes
+// API rotaları
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// Check if client/dist directory exists
+// Client dosyalarını servis et (varsa)
 const clientDistPath = path.join(rootDir, "client", "dist");
 if (fs.existsSync(clientDistPath)) {
-  console.log("Serving client files from:", clientDistPath);
   app.use(express.static(clientDistPath));
-
-  // Client routes fallback
   app.get("*", (req, res) => {
     res.sendFile(path.join(clientDistPath, "index.html"));
   });
 } else {
-  console.log("Warning: Client dist directory not found at", clientDistPath);
-  console.log("Make sure to build the client side application first");
-  console.log(
-    "For development, you can ignore this warning if running the client separately"
-  );
-
-  // API-only mode - handle all non-API routes
+  // API-only mode
   app.get("*", (req, res) => {
     if (!req.path.startsWith("/api/")) {
       res.status(404).json({
@@ -121,11 +97,10 @@ if (fs.existsSync(clientDistPath)) {
   });
 }
 
-// 404 handler for API routes
+// API 404 handler
 app.use("/api/*", (req, res) => {
   res.status(404).json({
     success: false,
-    statusCode: 404,
     message: "API route not found",
   });
 });
@@ -134,7 +109,6 @@ app.use("/api/*", (req, res) => {
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
-  console.error(err);
   res.status(statusCode).json({
     success: false,
     statusCode,

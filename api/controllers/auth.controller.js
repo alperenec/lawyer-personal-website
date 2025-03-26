@@ -108,15 +108,18 @@ export const google = async (req, res, next) => {
         process.env.JWT_SECRET
       );
       const { password, ...rest } = newUser._doc;
+      // signin fonksiyonunda:
       res
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
-          sameSite: "none",
           secure: true,
+          sameSite: "none",
           path: "/",
         })
         .json(rest);
+
+      // Aynı değişikliği google fonksiyonunda da yapın
     }
   } catch (error) {
     next(error);
