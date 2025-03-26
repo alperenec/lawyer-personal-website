@@ -11,21 +11,20 @@ import cors from "cors";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-// Get current directory
+// Dosya yolu ayarları
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Load .env file at the top
-dotenv.config();
-
-// Fix the path to better handle directory structure
 const rootDir = path.resolve(__dirname, "..");
 
-// Check environment variables
+// Environment değişkenlerini yükle
+dotenv.config({ path: path.join(rootDir, ".env") });
+
+// Environment değişkenlerini kontrol et
 console.log("Environment Variables Loaded:", {
   PORT: process.env.PORT,
   MONGO: process.env.MONGO,
   CLIENT_URL: process.env.CLIENT_URL,
+  JWT_SECRET: process.env.JWT_SECRET ? "Set (masked)" : "Not set",
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY
     ? "Set (masked)"
@@ -35,52 +34,52 @@ console.log("Environment Variables Loaded:", {
     : "Not set",
 });
 
-// Create temp directory for uploads if it doesn't exist
+// Geçici klasör oluştur
 const tempDir = path.join(rootDir, "temp");
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
   console.log("Created temporary uploads directory at:", tempDir);
 }
 
-// MongoDB connection
+// MongoDB bağlantısı
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
-    console.log("MongoDb is connected");
+    console.log("MongoDB is connected");
   })
   .catch((err) => {
-    console.log(err);
+    console.error("MongoDB connection error:", err);
   });
 
+// Express uygulaması oluştur
 const app = express();
 
-// CORS configuration
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  "https://zafer-taga.vercel.app",
-  "https://zafer-taga--gilt.vercel.app",
-  "http://localhost:5173", // Geliştirme ortamı için
-];
-
+// CORS ayarları - tüm kaynaklara izin ver
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Eğer origin tanımsızsa (örneğin Postman gibi araçlardan gelen istekler) veya izin verilen origin'ler listesindeyse, erişime izin ver
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true, // Tüm kaynaklara izin ver
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept", "Cookie"],
   })
 );
 
-// Handle CORS preflight requests
-app.options("*", cors());
+// CORS preflight istekleri için ayarlar
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", req.header("Origin") || "*");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, Accept, Cookie"
+  );
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.status(200).end();
+});
 
+// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
@@ -90,15 +89,25 @@ app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// Check if client/dist directory exists
+// API test endpoint
+app.get("/api/test", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "API is working!",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Client dosyalarını servis et
 const clientDistPath = path.join(rootDir, "client", "dist");
 if (fs.existsSync(clientDistPath)) {
   console.log("Serving client files from:", clientDistPath);
   app.use(express.static(clientDistPath));
 
-  // Client routes fallback
   app.get("*", (req, res) => {
-    res.sendFile(path.join(clientDistPath, "index.html"));
+    if (!req.path.startsWith("/api/")) {
+      res.sendFile(path.join(clientDistPath, "index.html"));
+    }
   });
 } else {
   console.log("Warning: Client dist directory not found at", clientDistPath);
@@ -106,39 +115,35 @@ if (fs.existsSync(clientDistPath)) {
   console.log(
     "For development, you can ignore this warning if running the client separately"
   );
-
-  // API-only mode - handle all non-API routes
-  app.get("*", (req, res) => {
-    if (!req.path.startsWith("/api/")) {
-      res.status(404).json({
-        success: false,
-        message: "Client files not available, API only mode",
-      });
-    }
-  });
 }
 
-// 404 handler for API routes
+// 404 handler
 app.use("/api/*", (req, res) => {
   res.status(404).json({
     success: false,
     statusCode: 404,
     message: "API route not found",
+    path: req.originalUrl,
   });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
+  console.error("Error:", err);
+
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
-  console.error(err);
+
   res.status(statusCode).json({
     success: false,
     statusCode,
     message,
+    path: req.originalUrl,
+    timestamp: new Date().toISOString(),
   });
 });
 
+// Sunucuyu başlat
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}!`);
