@@ -17,14 +17,13 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 
 // Environment değişkenlerini yükle
-dotenv.config({ path: path.join(rootDir, ".env") });
+dotenv.config();
 
 // Environment değişkenlerini kontrol et
 console.log("Environment Variables Loaded:", {
   PORT: process.env.PORT,
   MONGO: process.env.MONGO,
   CLIENT_URL: process.env.CLIENT_URL,
-  JWT_SECRET: process.env.JWT_SECRET ? "Set (masked)" : "Not set",
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY
     ? "Set (masked)"
@@ -54,32 +53,56 @@ mongoose
 // Express uygulaması oluştur
 const app = express();
 
-// CORS ayarları - tüm kaynaklara izin ver
+// İzin verilen domainler
+const allowedOrigins = [
+  "https://zafer-taga.vercel.app",
+  "https://zafer-taga-m6aeom3hb-alperenecs-projects.vercel.app",
+  "https://zafer-taga--gilt.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+
+// CORS ayarları
 app.use(
   cors({
-    origin: true, // Tüm kaynaklara izin ver
+    origin: function (origin, callback) {
+      // origin null olabilir (örn. Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.log("CORS engellendi:", origin);
+        callback(null, false);
+      }
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept", "Cookie"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
   })
 );
 
-// CORS preflight istekleri için ayarlar
+// CORS preflight için özel işleyici
 app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", req.header("Origin") || "*");
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS, PATCH"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, Accept, Cookie"
-  );
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.status(200).end();
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, Accept"
+    );
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.status(200).end();
+  } else {
+    res.status(200).end();
+  }
 });
 
-// Middleware
+// Express middleware
 app.use(express.json());
 app.use(cookieParser());
 
@@ -88,15 +111,6 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/upload", uploadRoutes);
-
-// API test endpoint
-app.get("/api/test", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "API is working!",
-    timestamp: new Date().toISOString(),
-  });
-});
 
 // Client dosyalarını servis et
 const clientDistPath = path.join(rootDir, "client", "dist");
@@ -123,23 +137,18 @@ app.use("/api/*", (req, res) => {
     success: false,
     statusCode: 404,
     message: "API route not found",
-    path: req.originalUrl,
   });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error("Error:", err);
-
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
-
+  console.error(err);
   res.status(statusCode).json({
     success: false,
     statusCode,
     message,
-    path: req.originalUrl,
-    timestamp: new Date().toISOString(),
   });
 });
 
