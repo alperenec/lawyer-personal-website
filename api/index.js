@@ -54,30 +54,33 @@ mongoose
 
 const app = express();
 
-// Updated CORS configuration for index.js
+// CORS configuration - made more explicit
+app.use((req, res, next) => {
+  // Allow all origins
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, Origin"
+  );
 
-// Replace the current CORS configuration with this:
-// CORS yapılandırmasını güncelleyin - index.js
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
-// Bu kod parçasını CORS yapılandırmanızın olduğu yere koyun
+  next();
+});
+
+// Standard CORS middleware as backup
 app.use(
   cors({
-    origin: "*",
+    origin: true, // Uses req.headers.origin
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "X-CSRF-Token",
-      "X-Requested-With",
-      "Accept",
-      "Accept-Version",
-      "Content-Length",
-      "Content-MD5",
-      "Content-Type",
-      "Date",
-      "X-Api-Version",
-      "Authorization",
-      "Origin",
-    ],
   })
 );
 
@@ -139,7 +142,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3000; //updatedd
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}!`);
 });
