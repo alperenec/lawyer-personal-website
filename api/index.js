@@ -39,28 +39,52 @@ mongoose
 
 const app = express();
 
-// En basit CORS yapılandırması, herhangi bir middleware kullanmadan
+// Improved CORS configuration
 app.use((req, res, next) => {
-  // İstek yapılan origin'e izin ver ya da tümüne izin ver
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin);
+  // List of allowed origins
+  const allowedOrigins = [
+    "https://zafer-taga.vercel.app",
+    "https://zafer-taga-m6aeom3hb-alperenecs-projects.vercel.app",
+    "https://zafer-taga-g4ukbbfzd-alperenecs-projects.vercel.app",
+  ];
 
-  // Credentialsları etkinleştir
+  // Add localhost for development
+  if (process.env.NODE_ENV === "development") {
+    allowedOrigins.push(
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://127.0.0.1:5173"
+    );
+  }
+
+  // Check if the origin is in our allowed list
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else if (!origin) {
+    // For non-browser requests that don't have an origin
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  } else if (origin && origin.endsWith(".vercel.app")) {
+    // Allow all Vercel preview deployments
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  // Enable credentials
   res.setHeader("Access-Control-Allow-Credentials", "true");
 
-  // Tüm HTTP metodlarına izin ver
+  // Allow methods
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS"
   );
 
-  // Gerekli başlıklara izin ver
+  // Allow headers
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
 
-  // Preflight isteklerini hemen yanıtla
+  // Handle preflight requests
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
