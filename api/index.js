@@ -39,58 +39,38 @@ mongoose
 
 const app = express();
 
-// Improved CORS configuration
-app.use((req, res, next) => {
-  // List of allowed origins
-  const allowedOrigins = [
-    "https://zafer-taga.vercel.app",
-    "https://zafer-taga-m6aeom3hb-alperenecs-projects.vercel.app",
-    "https://zafer-taga-g4ukbbfzd-alperenecs-projects.vercel.app",
-  ];
+// Use the cors middleware - simpler and more reliable than custom middleware
+app.use(
+  cors({
+    // This function dynamically sets the origin based on the request
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
 
-  // Add localhost for development
-  if (process.env.NODE_ENV === "development") {
-    allowedOrigins.push(
-      "http://localhost:3000",
-      "http://localhost:5173",
-      "http://127.0.0.1:5173"
-    );
-  }
+      // Check if the origin ends with vercel.app (for all preview deployments)
+      if (origin.endsWith("vercel.app")) {
+        return callback(null, true);
+      }
 
-  // Check if the origin is in our allowed list
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  } else if (!origin) {
-    // For non-browser requests that don't have an origin
-    res.setHeader("Access-Control-Allow-Origin", "*");
-  } else if (origin && origin.endsWith(".vercel.app")) {
-    // Allow all Vercel preview deployments
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
+      // Check for localhost (development)
+      if (origin.match(/^http:\/\/localhost:[0-9]+$/)) {
+        return callback(null, true);
+      }
 
-  // Enable credentials
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-
-  // Allow methods
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
-
-  // Allow headers
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-
-  // Handle preflight requests
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  next();
-});
+      // Otherwise, deny the request
+      callback(new Error("CORS policy violation"), false);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Origin",
+      "X-Requested-With",
+      "Content-Type",
+      "Accept",
+      "Authorization",
+    ],
+  })
+);
 
 // Standart middleware'ler
 app.use(express.json());

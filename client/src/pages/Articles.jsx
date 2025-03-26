@@ -17,8 +17,28 @@ export default function Articles() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
 
-  // Sabit API URL kullanın (ortam değişkenleri yerine)
+  // Using the direct API URL
   const API_URL = "https://zafer-taga.vercel.app";
+
+  // Retry mechanism for API calls
+  const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(
+          `API returned ${response.status}: ${response.statusText}`
+        );
+      }
+      return await response.json();
+    } catch (error) {
+      if (retries > 0) {
+        console.log(`Retrying request to ${url}, ${retries} retries left`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        return fetchWithRetry(url, options, retries - 1, delay * 1.5);
+      }
+      throw error;
+    }
+  };
 
   // Handle URL parameters for category filtering
   useEffect(() => {
@@ -44,8 +64,8 @@ export default function Articles() {
 
         console.log("Fetching posts from:", url);
 
-        // Enhanced fetch with proper CORS headers but without credentials
-        const response = await fetch(url, {
+        // Use our retry mechanism
+        const data = await fetchWithRetry(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -54,14 +74,6 @@ export default function Articles() {
           mode: "cors",
         });
 
-        // Check for HTTP errors
-        if (!response.ok) {
-          throw new Error(
-            `API returned ${response.status}: ${response.statusText}`
-          );
-        }
-
-        const data = await response.json();
         console.log("API response data:", data);
 
         setPosts(data.posts || []);
@@ -89,11 +101,11 @@ export default function Articles() {
     }
   }, [selectedCategory, searchTerm]);
 
-  // Fetch categories for the filter
+  // Fetch categories with retry mechanism
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/post/getposts`, {
+        const data = await fetchWithRetry(`${API_URL}/api/post/getposts`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -101,12 +113,6 @@ export default function Articles() {
           },
           mode: "cors",
         });
-
-        if (!response.ok) {
-          throw new Error(`Categories API returned ${response.status}`);
-        }
-
-        const data = await response.json();
 
         // Extract unique categories
         const uniqueCategories = [
@@ -127,7 +133,7 @@ export default function Articles() {
     fetchCategories();
   }, []);
 
-  // Function to load more posts
+  // Function to load more posts with retry
   const handleShowMore = async () => {
     const startIndex = posts.length;
 
@@ -136,7 +142,7 @@ export default function Articles() {
       if (selectedCategory) url += `&category=${selectedCategory}`;
       if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
-      const response = await fetch(url, {
+      const data = await fetchWithRetry(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -144,12 +150,6 @@ export default function Articles() {
         },
         mode: "cors",
       });
-
-      if (!response.ok) {
-        throw new Error(`Load more API returned ${response.status}`);
-      }
-
-      const data = await response.json();
 
       setPosts((prev) => [...prev, ...(data.posts || [])]);
       setShowMore((data.posts || []).length >= 9);
