@@ -57,14 +57,27 @@ const app = express();
 // Updated CORS configuration for index.js
 
 // Replace the current CORS configuration with this:
+// CORS yapılandırmasını güncelleyin - index.js
+
+// Bu kod parçasını CORS yapılandırmanızın olduğu yere koyun
+const allowedOrigins = [
+  "https://zafer-taga.vercel.app",
+  "https://zafer-taga-baqkuv42s-alperenecs-projects.vercel.app",
+  "https://zafer-taga--gilt.vercel.app",
+  process.env.CLIENT_URL || "http://localhost:5173",
+];
+
 app.use(
   cors({
-    // Allow requests from both your main domain and development environment
-    origin: [
-      "https://zafer-taga.vercel.app",
-      "https://zafer-taga--gilt.vercel.app",
-      process.env.CLIENT_URL || "http://localhost:5173",
-    ],
+    origin: function (origin, callback) {
+      // Origin yoksa veya izin verilen originler listesindeyse izin ver
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.log("CORS isteği reddedildi: ", origin);
+        callback(null, false);
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
