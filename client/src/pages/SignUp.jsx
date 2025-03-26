@@ -9,8 +9,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -26,7 +25,7 @@ export default function SignUp() {
       setLoading(true);
       setErrorMessage(null);
       console.log("Kayıt için gönderilen veriler:", formData);
-      const res = await fetch(`${API_URL}/auth/signup`, {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

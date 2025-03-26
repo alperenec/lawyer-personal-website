@@ -15,16 +15,18 @@ export default function UpdatePost() {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
 
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_URL}/post/getposts?postId=${postId}`, {
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${API_URL}/api/post/getposts?postId=${postId}`,
+          {
+            credentials: "include",
+          }
+        );
         const contentType = res.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           throw new Error("Server returned non-JSON response");
@@ -65,7 +67,7 @@ export default function UpdatePost() {
       formData.append("file", file);
       setImageUploadProgress(1);
 
-      const res = await fetch(`${API_URL}/upload`, {
+      const res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -96,7 +98,7 @@ export default function UpdatePost() {
     e.preventDefault();
     try {
       const res = await fetch(
-        `${API_URL}/post/updatepost/${formData._id}/${currentUser._id}`,
+        `${API_URL}/api/post/updatepost/${formData._id}/${currentUser._id}`,
         {
           method: "PUT",
           credentials: "include",

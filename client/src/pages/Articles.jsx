@@ -16,8 +16,7 @@ export default function Articles() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
 
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -31,7 +30,7 @@ export default function Articles() {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        let url = `${API_URL}/post/getposts?limit=9`;
+        let url = `${API_URL}/api/post/getposts?limit=9`;
         if (selectedCategory) url += `&category=${selectedCategory}`;
         if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
@@ -62,7 +61,7 @@ export default function Articles() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch(`${API_URL}/post/getposts`, {
+        const res = await fetch(`${API_URL}/api/post/getposts`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -82,7 +81,7 @@ export default function Articles() {
   const handleShowMore = async () => {
     const startIndex = posts.length;
     try {
-      let url = `${API_URL}/post/getposts?startIndex=${startIndex}&limit=9`;
+      let url = `${API_URL}/api/post/getposts?startIndex=${startIndex}&limit=9`;
       if (selectedCategory) url += `&category=${selectedCategory}`;
       if (searchTerm) url += `&searchTerm=${searchTerm}`;
 

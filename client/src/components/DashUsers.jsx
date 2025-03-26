@@ -10,13 +10,12 @@ export default function DashUsers() {
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState("");
 
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`${API_URL}/user/getusers`, {
+        const res = await fetch(`${API_URL}/api/user/getusers`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -39,7 +38,7 @@ export default function DashUsers() {
     const startIndex = users.length;
     try {
       const res = await fetch(
-        `${API_URL}/user/getusers?startIndex=${startIndex}`,
+        `${API_URL}/api/user/getusers?startIndex=${startIndex}`,
         {
           credentials: "include",
         }
@@ -58,7 +57,7 @@ export default function DashUsers() {
 
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(`${API_URL}/user/delete/${userIdToDelete}`, {
+      const res = await fetch(`${API_URL}/api/user/delete/${userIdToDelete}`, {
         method: "DELETE",
         credentials: "include",
       });

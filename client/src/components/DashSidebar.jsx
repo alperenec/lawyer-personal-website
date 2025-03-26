@@ -17,8 +17,7 @@ export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState("");
 
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -30,7 +29,7 @@ export default function DashSidebar() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch(`${API_URL}/user/signout`, {
+      const res = await fetch(`${API_URL}/api/user/signout`, {
         method: "POST",
         credentials: "include",
       });

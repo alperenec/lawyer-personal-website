@@ -18,13 +18,12 @@ export default function DashboardComp() {
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
 
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`${API_URL}/user/getusers?limit=5`, {
+        const res = await fetch(`${API_URL}/api/user/getusers?limit=5`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -46,7 +45,7 @@ export default function DashboardComp() {
 
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`${API_URL}/post/getposts?limit=5`, {
+        const res = await fetch(`${API_URL}/api/post/getposts?limit=5`, {
           credentials: "include",
         });
         const data = await res.json();

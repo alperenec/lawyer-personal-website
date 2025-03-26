@@ -15,8 +15,7 @@ export default function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -31,7 +30,7 @@ export default function SignIn() {
     try {
       dispatch(signInStart());
       console.log("Giriş için gönderilen veriler:", formData);
-      const res = await fetch(`${API_URL}/auth/signin`, {
+      const res = await fetch(`${API_URL}/api/auth/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

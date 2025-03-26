@@ -13,16 +13,18 @@ export default function PostPage() {
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
 
-  const API_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_URL}/post/getposts?slug=${postSlug}`, {
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${API_URL}/api/post/getposts?slug=${postSlug}`,
+          {
+            credentials: "include",
+          }
+        );
         const data = await res.json();
 
         if (!res.ok) {
@@ -51,7 +53,7 @@ export default function PostPage() {
   useEffect(() => {
     const fetchRecentPosts = async () => {
       try {
-        const res = await fetch(`${API_URL}/post/getposts?limit=3`, {
+        const res = await fetch(`${API_URL}/api/post/getposts?limit=3`, {
           credentials: "include",
         });
         const data = await res.json();
