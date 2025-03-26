@@ -54,18 +54,32 @@ mongoose
 
 const app = express();
 
+// CORS configuration
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "https://zafer-taga.vercel.app",
+  "https://zafer-taga--gilt.vercel.app",
+  "http://localhost:5173", // Geliştirme ortamı için
+];
+
 app.use(
   cors({
-    origin: [
-      process.env.CLIENT_URL,
-      "https://zafer-taga.vercel.app",
-      "https://zafer-taga--gilt.vercel.app",
-    ],
+    origin: (origin, callback) => {
+      // Eğer origin tanımsızsa (örneğin Postman gibi araçlardan gelen istekler) veya izin verilen origin'ler listesindeyse, erişime izin ver
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
   })
 );
+
+// Handle CORS preflight requests
+app.options("*", cors());
 
 app.use(express.json());
 app.use(cookieParser());
@@ -125,7 +139,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3000; //updatedd
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}!`);
 });
