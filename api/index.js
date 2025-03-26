@@ -67,27 +67,33 @@ const allowedOrigins = [
   process.env.CLIENT_URL || "http://localhost:5173",
 ];
 
+// In your backend index.js or middleware
+const cors = require("cors");
+
+// Replace your current CORS configuration with this more permissive one
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Origin yoksa veya izin verilen originler listesindeyse izin ver
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        console.log("CORS isteği reddedildi: ", origin);
-        callback(null, false);
-      }
-    },
+    origin: [
+      "https://zafer-taga.vercel.app",
+      "https://zafer-taga--flax.vercel.app",
+      "https://zafer-taga-m6aeom3hb-alperenecs-projects.vercel.app",
+      // Add any other domains you might use
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Accept",
-      "Origin",
+      "X-CSRF-Token",
       "X-Requested-With",
+      "Accept",
+      "Accept-Version",
+      "Content-Length",
+      "Content-MD5",
+      "Content-Type",
+      "Date",
+      "X-Api-Version",
+      "Authorization",
+      "Origin",
     ],
-    exposedHeaders: ["Set-Cookie"],
   })
 );
 
