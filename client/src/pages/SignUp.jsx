@@ -59,7 +59,7 @@ export default function SignUp() {
         className="fixed inset-0 bg-cover bg-center opacity-30 z-10"
         style={{ backgroundImage: `url(${officeImage})` }}
       ></div>
-      <div className="relative z-20 pt-36 px-6 md:px-12 lg:px-24">
+      <div className="relative z-20 pt-20 px-6 md:px-12 lg:px-24">
         <div className="max-w-md mx-auto">
           <h1 className="text-4xl font-bold text-white mb-6 text-center">
             Kayıt Ol

@@ -29,10 +29,10 @@ export default function DashUsers() {
         console.log(error.message);
       }
     };
-    if (currentUser.isAdmin) {
+    if (currentUser && currentUser.isAdmin) {
       fetchUsers();
     }
-  }, [currentUser._id]);
+  }, [currentUser?._id]);
 
   const handleShowMore = async () => {
     const startIndex = users.length;
@@ -75,7 +75,7 @@ export default function DashUsers() {
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3">
-      {currentUser.isAdmin && users.length > 0 ? (
+      {currentUser && currentUser.isAdmin && users.length > 0 ? (
         <>
           <table className="shadow-md w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

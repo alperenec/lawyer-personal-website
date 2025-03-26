@@ -65,7 +65,7 @@ export default function DashboardComp() {
       }
     };
 
-    if (currentUser.isAdmin) {
+    if (currentUser && currentUser.isAdmin) {
       fetchUsers();
       fetchPosts();
     }

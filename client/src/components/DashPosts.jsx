@@ -35,7 +35,7 @@ export default function DashPosts() {
         );
       }
     };
-    if (currentUser.isAdmin) fetchPosts();
+    if (currentUser && currentUser.isAdmin) fetchPosts();
   }, [currentUser._id]);
 
   const handleShowMore = async () => {
