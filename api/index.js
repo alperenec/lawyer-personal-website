@@ -54,10 +54,13 @@ mongoose
 
 const app = express();
 
-// CORS configuration with dynamic client URL
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: [
+      process.env.CLIENT_URL,
+      "https://zafer-taga.vercel.app",
+      "https://zafer-taga--gilt.vercel.app",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
