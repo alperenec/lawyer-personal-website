@@ -60,25 +60,9 @@ const app = express();
 // CORS yapılandırmasını güncelleyin - index.js
 
 // Bu kod parçasını CORS yapılandırmanızın olduğu yere koyun
-const allowedOrigins = [
-  "https://zafer-taga.vercel.app",
-  "https://zafer-taga-baqkuv42s-alperenecs-projects.vercel.app",
-  "https://zafer-taga--gilt.vercel.app",
-  process.env.CLIENT_URL || "http://localhost:5173",
-];
-
-// In your backend index.js or middleware
-const cors = require("cors");
-
-// Replace your current CORS configuration with this more permissive one
 app.use(
   cors({
-    origin: [
-      "https://zafer-taga.vercel.app",
-      "https://zafer-taga--flax.vercel.app",
-      "https://zafer-taga-m6aeom3hb-alperenecs-projects.vercel.app",
-      // Add any other domains you might use
-    ],
+    origin: "*",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
