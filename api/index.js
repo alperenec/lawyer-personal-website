@@ -54,13 +54,27 @@ mongoose
 
 const app = express();
 
-// CORS configuration with dynamic client URL
+// Updated CORS configuration for index.js
+
+// Replace the current CORS configuration with this:
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    // Allow requests from both your main domain and development environment
+    origin: [
+      "https://zafer-taga.vercel.app",
+      "https://zafer-taga--gilt.vercel.app",
+      process.env.CLIENT_URL || "http://localhost:5173",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+      "Origin",
+      "X-Requested-With",
+    ],
+    exposedHeaders: ["Set-Cookie"],
   })
 );
 

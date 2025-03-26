@@ -11,13 +11,17 @@ export default function Articles() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [showMore, setShowMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
 
-  const API_URL = import.meta.env.VITE_API_BASE_URL;
+  // Get API URL from environment variables or use a fallback
+  const API_URL =
+    import.meta.env.VITE_API_BASE_URL || "https://zafer-taga--gilt.vercel.app";
 
+  // Handle URL parameters for category filtering
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const categoryParam = urlParams.get("category");
@@ -26,98 +30,177 @@ export default function Articles() {
     }
   }, [location.search]);
 
+  // Main function to fetch posts with proper error handling
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
+        setError(false);
+        setErrorMessage("");
+
+        // Build the URL with query parameters
         let url = `${API_URL}/api/post/getposts?limit=9`;
         if (selectedCategory) url += `&category=${selectedCategory}`;
         if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
         console.log("Fetching posts from:", url);
-        const res = await fetch(url, { credentials: "include" });
-        console.log("API response status:", res.status);
 
-        const data = await res.json();
+        // Enhanced fetch with proper CORS headers
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Origin: window.location.origin,
+          },
+          mode: "cors",
+        });
+
+        // Check for HTTP errors
+        if (!response.ok) {
+          throw new Error(
+            `API returned ${response.status}: ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
         console.log("API response data:", data);
 
-        if (res.ok) {
-          setPosts(data.posts || []);
-          setShowMore((data.posts || []).length >= 9);
-        } else {
-          setError(true);
-          console.error("API error:", data);
-        }
+        setPosts(data.posts || []);
+        setShowMore((data.posts || []).length >= 9);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
         setError(true);
+        setErrorMessage(
+          `Makaleler yüklenirken bir hata oluştu: ${error.message}`
+        );
         setLoading(false);
       }
     };
-    fetchPosts();
-  }, [selectedCategory, searchTerm]);
 
+    // Only fetch if we have a valid API URL
+    if (API_URL) {
+      fetchPosts();
+    } else {
+      setError(true);
+      setErrorMessage(
+        "API URL bulunamadı. Lütfen sistem yöneticisine başvurun."
+      );
+      setLoading(false);
+    }
+  }, [selectedCategory, searchTerm, API_URL]);
+
+  // Fetch categories for the filter
   useEffect(() => {
     const fetchCategories = async () => {
+      if (!API_URL) return;
+
       try {
-        const res = await fetch(`${API_URL}/api/post/getposts`, {
+        const response = await fetch(`${API_URL}/api/post/getposts`, {
+          method: "GET",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Origin: window.location.origin,
+          },
+          mode: "cors",
         });
-        const data = await res.json();
-        if (res.ok) {
-          const uniqueCategories = [
-            ...new Set((data.posts || []).map((post) => post.category)),
-          ];
-          setCategories(uniqueCategories);
+
+        if (!response.ok) {
+          throw new Error(`Categories API returned ${response.status}`);
         }
+
+        const data = await response.json();
+
+        // Extract unique categories
+        const uniqueCategories = [
+          ...new Set(
+            (data.posts || [])
+              .filter((post) => post.category) // Filter out posts without categories
+              .map((post) => post.category)
+          ),
+        ];
+
+        setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching categories:", error);
+        // We don't set the main error state here to avoid disrupting the main content
       }
     };
-    fetchCategories();
-  }, []);
 
+    fetchCategories();
+  }, [API_URL]);
+
+  // Function to load more posts
   const handleShowMore = async () => {
     const startIndex = posts.length;
+
     try {
       let url = `${API_URL}/api/post/getposts?startIndex=${startIndex}&limit=9`;
       if (selectedCategory) url += `&category=${selectedCategory}`;
       if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
-      const res = await fetch(url, { credentials: "include" });
-      const data = await res.json();
-      if (res.ok) {
-        setPosts((prev) => [...prev, ...(data.posts || [])]);
-        setShowMore((data.posts || []).length >= 9);
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Origin: window.location.origin,
+        },
+        mode: "cors",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Load more API returned ${response.status}`);
       }
+
+      const data = await response.json();
+
+      setPosts((prev) => [...prev, ...(data.posts || [])]);
+      setShowMore((data.posts || []).length >= 9);
     } catch (error) {
       console.error("Error fetching more posts:", error);
+      // Show a temporary error message without disrupting the UI
+      alert(
+        "Daha fazla makale yüklenirken hata oluştu. Lütfen tekrar deneyin."
+      );
     }
   };
 
+  // Handle search form submission
   const handleSearch = (e) => {
     e.preventDefault();
+    // Search is already triggered via the useEffect when searchTerm changes
   };
 
+  // Handle category selection
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setPosts([]);
+    setPosts([]); // Clear posts when changing category
   };
 
   return (
     <div className="min-h-screen relative">
+      {/* Background layers */}
       <div className="fixed inset-0 bg-black z-0"></div>
       <div
         className="fixed inset-0 bg-cover bg-center opacity-30 z-10"
         style={{ backgroundImage: `url(${officeImage})` }}
       ></div>
+
       <Navbar />
+
       <div className="relative z-20 pt-36 px-6 md:px-12 lg:px-24 pb-20">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-10 heading-font">
             Makaleler
           </h1>
+
+          {/* Search and Filter Section */}
           <div className="bg-black bg-opacity-70 p-6 rounded-lg shadow-lg mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <form onSubmit={handleSearch} className="flex-1">
@@ -145,6 +228,8 @@ export default function Articles() {
                   </svg>
                 </div>
               </form>
+
+              {/* Category Dropdown */}
               <div className="flex-shrink-0 w-full md:w-auto">
                 <select
                   value={selectedCategory}
@@ -161,15 +246,19 @@ export default function Articles() {
               </div>
             </div>
           </div>
+
+          {/* Main Content Section */}
           <div className="bg-black bg-opacity-70 p-6 rounded-lg shadow-lg">
             {loading ? (
+              // Loading state
               <div className="flex justify-center items-center py-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#dcac2f]"></div>
               </div>
             ) : error ? (
+              // Error state
               <div className="text-center py-20">
                 <p className="text-xl text-white mb-4">
-                  Makaleler yüklenirken bir hata oluştu.
+                  {errorMessage || "Makaleler yüklenirken bir hata oluştu."}
                 </p>
                 <button
                   onClick={() => window.location.reload()}
@@ -179,6 +268,7 @@ export default function Articles() {
                 </button>
               </div>
             ) : posts.length > 0 ? (
+              // Posts found
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {posts.map((post) => (
@@ -197,6 +287,7 @@ export default function Articles() {
                 )}
               </>
             ) : (
+              // No posts found
               <div className="text-center py-20">
                 <p className="text-xl text-white mb-4">
                   {searchTerm || selectedCategory
@@ -217,6 +308,8 @@ export default function Articles() {
               </div>
             )}
           </div>
+
+          {/* Categories Section */}
           {categories.length > 0 && (
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-white mb-6">
@@ -249,6 +342,7 @@ export default function Articles() {
           )}
         </div>
       </div>
+
       <FloatingContactButtons />
     </div>
   );
