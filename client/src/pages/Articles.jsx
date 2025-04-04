@@ -17,8 +17,8 @@ export default function Articles() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
 
-  // Using the direct API URL
-  const API_URL = "https://zafer-taga.vercel.app";
+  // Using relative URLs with Vite proxy
+  const API_URL = "";
 
   // Retry mechanism for API calls
   const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
@@ -57,8 +57,8 @@ export default function Articles() {
         setError(false);
         setErrorMessage("");
 
-        // Build the URL with query parameters
-        let url = `${API_URL}/api/post/getposts?limit=9`;
+        // Build the URL with query parameters - use relative URL
+        let url = `/api/post/getposts?limit=9`;
         if (selectedCategory) url += `&category=${selectedCategory}`;
         if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
@@ -71,7 +71,6 @@ export default function Articles() {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          mode: "cors",
         });
 
         console.log("API response data:", data);
@@ -89,29 +88,19 @@ export default function Articles() {
       }
     };
 
-    // Only fetch if we have a valid API URL
-    if (API_URL) {
-      fetchPosts();
-    } else {
-      setError(true);
-      setErrorMessage(
-        "API URL bulunamadı. Lütfen sistem yöneticisine başvurun."
-      );
-      setLoading(false);
-    }
+    fetchPosts();
   }, [selectedCategory, searchTerm]);
 
   // Fetch categories with retry mechanism
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await fetchWithRetry(`${API_URL}/api/post/getposts`, {
+        const data = await fetchWithRetry(`/api/post/getposts`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          mode: "cors",
         });
 
         // Extract unique categories
@@ -138,7 +127,7 @@ export default function Articles() {
     const startIndex = posts.length;
 
     try {
-      let url = `${API_URL}/api/post/getposts?startIndex=${startIndex}&limit=9`;
+      let url = `/api/post/getposts?startIndex=${startIndex}&limit=9`;
       if (selectedCategory) url += `&category=${selectedCategory}`;
       if (searchTerm) url += `&searchTerm=${searchTerm}`;
 
@@ -148,7 +137,6 @@ export default function Articles() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        mode: "cors",
       });
 
       setPosts((prev) => [...prev, ...(data.posts || [])]);

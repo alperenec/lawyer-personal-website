@@ -39,27 +39,10 @@ mongoose
 
 const app = express();
 
-// Use the cors middleware - simpler and more reliable than custom middleware
+// Use the cors middleware with a more permissive configuration
 app.use(
   cors({
-    // This function dynamically sets the origin based on the request
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      // Check if the origin ends with vercel.app (for all preview deployments)
-      if (origin.endsWith("vercel.app")) {
-        return callback(null, true);
-      }
-
-      // Check for localhost (development)
-      if (origin.match(/^http:\/\/localhost:[0-9]+$/)) {
-        return callback(null, true);
-      }
-
-      // Otherwise, deny the request
-      callback(new Error("CORS policy violation"), false);
-    },
+    origin: true, // This allows all origins
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
@@ -72,17 +55,17 @@ app.use(
   })
 );
 
-// Standart middleware'ler
+// Standard middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// API rotaları
+// API routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// Client dosyalarını servis et (varsa)
+// Serve client files (if they exist)
 const clientDistPath = path.join(rootDir, "client", "dist");
 if (fs.existsSync(clientDistPath)) {
   app.use(express.static(clientDistPath));
