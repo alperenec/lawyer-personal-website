@@ -16,8 +16,20 @@ export default function OAuth() {
       const auth = getAuth(app);
 
       const result = await signInWithPopup(auth, provider);
+      console.log("Firebase authentication successful:", result.user);
+
+      // Define API URL
+      const API_URL =
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+      console.log("API URL:", API_URL);
 
       // Backend'e kullanıcı verileri gönder
+      console.log("Sending data to backend:", {
+        name: result.user.displayName,
+        email: result.user.email,
+        googlePhotoUrl: result.user.photoURL,
+      });
+
       const res = await fetch(`${API_URL}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -29,15 +41,30 @@ export default function OAuth() {
         }),
       });
 
-      const data = await res.json();
+      console.log("Backend response status:", res.status);
+
+      // Be careful with parsing empty responses
+      let data;
+      const text = await res.text();
+      console.log("Raw response:", text);
+
+      if (text) {
+        data = JSON.parse(text);
+      } else {
+        throw new Error("Empty response from server");
+      }
+
       if (res.ok) {
         dispatch(signInSuccess(data));
         navigate("/");
       } else {
-        console.error("Backend authentication failed:", data.message);
+        console.error(
+          "Backend authentication failed:",
+          data?.message || "Unknown error"
+        );
       }
     } catch (error) {
-      console.log("Google sign in failed:", error);
+      console.error("Google sign in failed:", error);
     }
   };
 
