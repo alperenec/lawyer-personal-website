@@ -6,9 +6,10 @@
 ![Express](https://img.shields.io/badge/Express-4.21.2-lightgrey)
 
 
-**⚠️ NOTE:** This repository contains **no source code** as it's a proprietary commercial project.
+**⚠️ NOTE:** This repository contains **no source code** as it's a commercial project.
 
-**⚠️ The project will be deployed when the final features are developed.**
+**✨ [Click here](https://zafer-taga.vercel.app) to visit the website**
+
 
 ---
 
@@ -107,83 +108,3 @@ The project follows the MERN stack architecture:
 - Blog post editor with image upload
 - User management system with admin privileges
 - Profile management with profile picture upload
-
-## 📁 Project Structure
-
-### Backend (API)
-
-#### Main Files
-- `index.js` - Main server entry point
-- `package.json` - Dependencies and scripts
-
-#### API Routes
-- `auth.route.js` - Authentication routes (signup, signin, Google auth)
-- `post.route.js` - Blog post management
-- `upload.route.js` - File upload handling
-- `user.route.js` - User management
-
-#### Controllers
-- `auth.controller.js` - Authentication logic
-- `post.controller.js` - Blog post CRUD operations
-- `upload.controller.js` - Cloudinary integration for uploads
-- `user.controller.js` - User management operations
-
-#### Models
-- `post.model.js` - Blog post schema
-- `user.model.js` - User schema
-
-#### Utilities
-- `error.js` - Custom error handling
-- `verifyUser.js` - JWT verification middleware
-
-### Frontend (Client)
-
-#### Pages
-- `Home.jsx` - Landing page
-- `About.jsx` - About the lawyer and firm
-- `Services.jsx` - Services overview
-- `ServicesDetail.jsx` - Individual service details
-- `Articles.jsx` - Blog listing page
-- `PostPage.jsx` - Individual blog post
-- `Contact.jsx` - Contact form
-- `FAQ.jsx` - Frequently asked questions
-- `Dashboard.jsx` - Admin dashboard
-- `SignIn.jsx`/`SignUp.jsx` - Authentication screens
-- `CreatePost.jsx`/`UpdatePost.jsx` - Blog post editor
-
-#### Components
-- `Navbar.jsx` - Navigation header
-- `Footer.jsx` - Site footer
-- `FloatingContactButtons.jsx` - Fixed contact buttons
-- `HeroSection.jsx` - Homepage hero
-- `ServicesSection.jsx` - Services overview
-- `Comments.jsx` - Testimonials carousel
-- `PostCard.jsx` - Blog post preview card
-- Dashboard components:
-  - `DashProfile.jsx` - User profile editor
-  - `DashSidebar.jsx` - Dashboard navigation
-  - `DashPosts.jsx` - Blog post management
-  - `DashUsers.jsx` - User management
-  - `DashboardComp.jsx` - Analytics overview
-
-#### State Management
-- `redux/` folder containing:
-  - `store.js` - Redux store configuration with persist
-  - `user/userSlice.js` - User authentication state
-
-#### Utilities
-- `firebase.js` - Firebase configuration for Google auth
-- `ScrollToTop.jsx` - Scroll restoration utility
-- `PrivateRoute.jsx`/`OnlyAdminPrivateRoute.jsx` - Route protection
-
-
-
-
-
-## 👤 Author
-
-This is a proprietary project by Alperen Emre Candan.
-
-## 📄 License
-
-This is a commercial project with all rights reserved. The code is not available for public use or distribution.
