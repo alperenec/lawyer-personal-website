@@ -6,7 +6,6 @@
 ![Express](https://img.shields.io/badge/Express-4.21.2-lightgrey)
 
 
-**⚠️ NOTE:** This repository contains **no source code** as it's a commercial project.
 
 **✨ [Click here](https://zafer-taga.vercel.app) to visit the website**
 
